@@ -1,0 +1,28 @@
+.user-social{
+	display: block;
+	margin:10px auto;
+}
+
+.user-social li{
+	display: inline;
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.ibox-content img{
+	width: 50%;
+    max-height: 350px;
+    margin: 10px auto;
+}
+
+.ibox-tools .dropdown-menu{
+	z-index: 1000;	
+}
+
+.category-list{
+	cursor: pointer;
+}
+
+.category-list:hover{
+	    background: #79ece8;
+}
