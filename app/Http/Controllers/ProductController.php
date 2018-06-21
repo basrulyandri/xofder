@@ -34,7 +34,7 @@ class ProductController extends Controller
     			'stock_from_id' => 'required|numeric',    			
     		]);
     	$request->request->add(['user_id' => auth()->user()->id]);
-    	$request->request->add(['store_id'=> 1]);
+    	$request->request->add(['store_id'=> auth()->user()->store->id]);
     	$request->request->add(['stock_from'=>'supplier']);    	
         //dd($request->all());
     	Stock::create($request->all());

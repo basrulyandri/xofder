@@ -5,15 +5,17 @@
 @section('content')
 
 <div class="row">
-
-	<!-- button-states -->
-	<div class="col-sm-9 col-md-9">						
+	<div class="col-sm-9 col-md-9">
+		<div class="row">	
+			<div class="col-sm-12">
+				<h3 class="pull-left">EDIT PENJUALAN</h3>
+				<h3 class="pull-right">{{$order->customer->name}}</h3>
+				<hr/>
+			</div>
+		</div>					
 		<div id="list-penjualan">
-			<h3>EDIT PENJUALAN</h3>
 			<div class="row">
-				<div class="col-sm-12">
-
-				</div>
+				
 				<table class="table table-striped table-resposive">
 					<thead>
 						<tr>
@@ -34,8 +36,8 @@
 							<td>1</td>
 							<td>{{$cart['item']->name}} <br><small>stock:{{$cart['stocks']}}</small></td>
 							<td><a href="#btn-{{$key}}" id="btn-{{$key}}" class="qty" data-type="text" data-pk="{{$key}}" data-url="{{route('ajax.qty.edit')}}" data-title="Masukkan jumlah">{{$cart['qty']}}</a></td>
-							<td>{{toRp($cart['item']->sell_price)}}</td>
-							<td>{{toRp($cart['item']->sell_price * $cart['qty'])}}</td>
+							<td><a href="#btnHarga-{{$key}}" id="btnHarga-{{$key}}" class="harga" data-type="text" data-pk="{{$key}}" data-url="{{route('ajax.harga.edit')}}" data-title="Masukkan jumlah">{{$cart['price']}}</a></td>
+							<td>{{toRp($cart['price'] * $cart['qty'])}}</td>
 							<td>
 								<button product_id="{{$key}}" class="btn btn-sm bg-danger btn-hapus"><i class="fa fa-times"></i> Hapus</button>
 							</td>
@@ -76,13 +78,19 @@
 		<br>
 		<br>
 		<div class="row">
-			<div class="col-sm-4 col-sm-offset-8 text-right">							
+			<div class="col-sm-4 col-sm-offset-8 text-right">	
+				@if($order->customer_id == 1)						
 				<a href="{{route('kasir.save',['order_id' => $order->id])}}" class="btn btn-lg btn-warning bg-info">Simpan <i class="fa fa-save"></i></a>
 				<form  style="display: inline-block;" method="POST" action="{{route('post.penjualan.update')}}">
 					{{csrf_field()}}
 					<input type="hidden" name="id" value="{{$order->id}}">
 					<input type="submit" class="btn btn-lg btn-primary bg-info" value="Selesai"> </a>
 				</form>
+				@else
+				<a id="btnFinish" href="{{route('kasir.finish.to.customer')}}" class="btn btn-lg btn-primary bg-info">Lanjut <i class="fa fa-check"></i></a>
+				@endif
+
+				
 			</div>												
 		</div>
 		</div>
@@ -170,6 +178,15 @@
 		        $('#list-penjualan').html(response.viewlistpenjualan);
 		    }
 		});
+		@if($order->customer_id == 1)
+		$('#list-penjualan').editable({
+			selector:'.harga',
+			success: function(response, newValue) {				
+		        $('#list-penjualan').html(response.viewlistpenjualan);
+		        console.log(newValue);
+		    }
+		});
+		@endif
 	});
 </script>
 @stop

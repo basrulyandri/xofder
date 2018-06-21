@@ -28,3 +28,8 @@ function amountOfProductsHasMinimunStock()
 	return $amount;
 }
 
+function amountOfDraftOrders()
+{
+	return \App\Order::whereStatus('draft')->count();
+}
+

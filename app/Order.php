@@ -47,4 +47,9 @@ class Order extends Model
     {
         return $this->belongsTo(Store::class);
     }
+
+    public function sisaHutang()
+    {
+        return $this->total_price - $this->pembayaran->sum('nominal');
+    }
 }

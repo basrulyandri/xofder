@@ -299,10 +299,21 @@ Route::group(['middleware' => 'rbac'],function(){
 	    		'as' => 'penjualan.detail',
 	    	]);
 
+	    Route::get('penjualan/{order}/bayar', [
+	    		'uses' => 'KasirController@bayarhutangpenjualan',
+	    		'as' => 'kasir.bayar.hutang.penjualan',
+	    	]);
+
+	    Route::post('penjualan/post/bayar', [
+	    		'uses' => 'KasirController@postbayarhutangpenjualan',
+	    		'as' => 'kasir.post.bayar.hutang.penjualan',
+	    	]);
+
 	    Route::get('penjualan/{order}/delete', [
 	    		'uses' => 'KasirController@deleteorder',
 	    		'as' => 'kasir.penjualan.delete',
 	    	]);
+
 	    Route::get('stocks/', [
 	    		'uses' => 'KasirController@stocks',
 	    		'as' => 'kasir.stocks.index',

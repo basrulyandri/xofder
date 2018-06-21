@@ -48,13 +48,13 @@
                                     </thead>
                                     <tbody>
                                     
-                                    @foreach(unserialize($order->cart_items)->items as $key => $item)
+                                    @foreach($order->items as $item)
                                     
                                     <tr>
-                                        <td><div><strong>{{$item['item']->name}}</strong></div></td>
-                                        <td>{{$item['qty']}}</td>
-                                        <td>{{toRp($item['price'])}}</td>
-                                        <td>{{toRp($item['qty'] * $item['price'])}}</td>                                        
+                                        <td><div><strong>{{$item->product->name}}</strong></div></td>
+                                        <td>{{$item->qty}}</td>
+                                        <td>{{toRp($item->price)}}</td>
+                                        <td>{{toRp($item->qty * $item->price)}}</td>                                        
                                     </tr>                                    
 									@endforeach
                                     </tbody>
@@ -65,11 +65,11 @@
                                 <tbody>                                
                                 <tr>
                                     <td><strong>TOTAL BARANG :</strong></td>
-                                    <td>{{unserialize($order->cart_items)->totalQty}} PCS</td>
+                                    <td>{{$order->total_qty}} PCS</td>
                                 </tr>
                                 <tr>
                                     <td><strong>TOTAL HARGA :</strong></td>
-                                    <td>{{toRp(unserialize($order->cart_items)->totalPrice)}}</td>
+                                    <td>{{toRp($order->total_price)}}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>BAYAR :</strong></td>
@@ -77,12 +77,15 @@
                                 </tr>
                                  <tr>
                                     <td><strong>HUTANG :</strong></td>
-                                    <td>{{toRp($order->total_price - $order->pembayaran->sum('nominal'))}}</td>
+                                    <td><span class="label label-warning">{{toRp($order->total_price - $order->pembayaran->sum('nominal'))}}</span></td>
                                 </tr>
                                 
                                 </tbody>
                             </table>
                             <div class="text-right">
+                                @if($order->status == 'hutang')
+                                    <a href="{{route('kasir.bayar.hutang.penjualan',$order)}}"" class="btn btn-success">Bayar</a>
+                                @endif
                                 <a href="{{route('order.print',$order)}}" class="btn btn-primary"><i class="fa fa-print"></i> Print</a>
                             </div>                            
                         </div>

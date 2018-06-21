@@ -5,8 +5,6 @@
 @section('content')
 
 	<div class="row">
-				{{date("Y/m/d h:i:s")}}
-					<!-- button-states -->
 					<div class="col-sm-9 col-md-9">
 						<div class="row">
 							<div class="col-sm-12">								

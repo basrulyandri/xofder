@@ -1,6 +1,5 @@
 @extends('layouts.kasir.master')
 @section('header')
-	<link rel="stylesheet" href="{{asset('cashier')}}/bootstrap3-editable/css/bootstrap-editable.css">
 @stop
 @section('content')
 
@@ -16,9 +15,9 @@
                                 <div class="col-sm-6">                                    
                                     <address>
                                         <strong>{{getSetting('company_name')}}</strong><br>
-                                        {{auth()->user()->store->name}}<br>
-                                        {{auth()->user()->store->address}}<br>
-                                        <abbr title="Phone"></abbr> {{auth()->user()->store->phone}}
+                                        {{$order->store->name}}<br>
+                                        {{$order->store->address}}<br>
+                                        <abbr title="Phone"></abbr> {{$order->store->phone}}
                                     </address>
                                 </div>
 
@@ -46,12 +45,12 @@
                                     <tbody>
                                     
                                     
-                                    @foreach(session('cart')->items as $key => $item)
+                                    @foreach($order->items as $item)
                                     <tr>
-                                        <td><div><strong>{{$item['item']->name}}</strong></div></td>
-                                        <td>{{$item['qty']}}</td>
-                                        <td>{{toRp($item['price'])}}</td>
-                                        <td>{{toRp($item['qty'] * $item['price'])}}</td>                                        
+                                        <td><div><strong>{{$item->product->name}}</strong></div></td>
+                                        <td>{{$item->qty}}</td>
+                                        <td>{{toRp($item->price)}}</td>
+                                        <td>{{toRp($item->qty * $item->price)}}</td>                                        
                                     </tr>                                    
                                     @endforeach
                                     </tbody>
@@ -68,6 +67,11 @@
                                     <td><strong>TOTAL HARGA :</strong></td>
                                     <td>{{toRp($order->total_price)}}</td>
                                 </tr>
+
+                                 <tr>
+                                    <td><strong>TOTAL BAYAR :</strong></td>
+                                    <td>{{toRp($order->pembayaran->sum('nominal'))}}</td>
+                                </tr>
                                 </tbody>
                             </table>                            
                         </div>
@@ -78,28 +82,24 @@
             <div class="col-lg-4">
             	<div class="wrapper wrapper-content animated fadeInRight">
             		<div class="ibox-title">
-            		<h3>Pembayaran</h3>
+            		<h3>Pembayaran Hutang</h3>
             		</div>
                     
-                    <div class="ibox-content p-xl">
-            			{!!Form::open(['route' =>'kasir.finish.final.tocustomer'])!!}
-                            @if(session('cart')->orderId)
-                                <input type="hidden" name="order_id" value="{{$order->id}}">
-                            @else
-                                <input type="hidden" name="order" value="{{json_encode($order)}}">
-                            @endif
-							<div class='form-group{{$errors->has('pembayaran') ? ' has-error' : ''}}'>
-								{!!Form::label('pembayaran','Cara Pembayaran')!!}
-							  
-							    {!!Form::select('pembayaran',[''=>'Pilih cara bayar','lunas' => 'Lunas','hutang' => 'hutang'],old('pembayaran'),['class' => 'form-control','required' => 'true','id' => 'pembayaran'])!!}							  
-							</div>
+                    <div class="ibox-content">
+                        <h2 class="text-center">SISA HUTANG</h2>
+                        <h3 class="text-center" style="background-color: #ec9613; padding:10px 5px; color: #fff;">{{toRp($order->sisaHutang())}}</h3>
+                        
+            			{!!Form::open(['route' =>'kasir.post.bayar.hutang.penjualan'])!!}                            
+                            <input type="hidden" name="order_id" value="{{$order->id}}">
+                            <div class='form-group{{$errors->has('nominal') ? ' has-error' : ''}}'>
+			                    {!!Form::label('nominal','Nominal Pembayaran',['class' => 'control-label'])!!}
+			                    
+			                    {!!Form::text('nominal',old('nominal'),['class' => 'uang form-control'])!!}
+			                  </div>
 
-							<div class="form-group" id="nominal">
-								
-								  
-								  
-							</div>					
-							<input type="submit" value="Selesai" class="btn btn-lg btn-primary bg-info">
+			                <div class="form-group">
+								<input type="submit" value="Selesai" class="btn btn-lg btn-primary bg-info">
+							</div>
             			{!!Form::close()!!}
             			
             		</div>
@@ -112,33 +112,18 @@
 <script src="{{url('assets/backend')}}/js/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js"></script>
 	<script>
 		$(document).ready(function(){
-			$('#pembayaran').change(function(){
-				//alert($(this).val());	
-
-				if($(this).val() == 'hutang'){
-					//alert(0);
-					var input_nominal = '<label>Jumlah bayar</label><input type="text" name="nominal" class="form-control uang" required>';
-					$('#nominal').html(input_nominal);
-                     $('.uang').inputmask({
-                      'alias': 'numeric', 
-                      'radixPoint': ',',
-                      'groupSeparator': '.',
-                      'autoGroup': true,
-                      'digits': 0,
-                      'digitsOptional': false,
-                      'prefix': 'Rp ',
-                      'placeholder': '0',
-                      'removeMaskOnSubmit':true,
-                      'rightAlign': false
-                    });
-				}
-
-				if($(this).val() == 'lunas'){
-					$('#nominal').html('');
-				}
-			});
-
-           
+	        $('.uang').inputmask({
+	          'alias': 'numeric', 
+	          'radixPoint': ',',
+	          'groupSeparator': '.',
+	          'autoGroup': true,
+	          'digits': 0,
+	          'digitsOptional': false,
+	          'prefix': 'Rp ',
+	          'placeholder': '0',
+	          'removeMaskOnSubmit':true,
+	          'rightAlign': false
+	        });	
 		});
 	</script>
 @stop

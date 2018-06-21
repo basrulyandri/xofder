@@ -4,9 +4,9 @@
 @stop
 @section('content')
 <div class="row">
-            <div class="alert alert-warning">              
+            <!-- <div class="alert alert-warning">              
               <strong>Catatan ! </strong> Stock ini otomatis akan dimasukkan ke dalam stock Toko Blok F
-            </div>
+            </div> -->
             <div class="col-lg-12">
             {!!Form::open(['route' =>'post.product.addstock', 'class' => 'form-horizontal'])!!}
             <input type="hidden" name="product_id" value="{{$product->id}}">

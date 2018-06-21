@@ -6,13 +6,17 @@
 	<div class="row">
     <div class="col-lg-12">
         <a href="{{route('penjualan.hari.ini')}}" class="btn btn-sm {{(!\Request::has('status'))? 'btn-success' : 'btn-default'}}">Selesai</a>
-        <a href="{{route('penjualan.hari.ini',['status' => 'draft'])}}" class="btn btn-sm {{(\Request::has('status') && \Request::input('status') == 'draft') ? 'btn-success' : 'btn-default'}}">Draft</a>
+        <a href="{{route('penjualan.hari.ini',['status' => 'draft'])}}" class="btn btn-sm {{(\Request::has('status') && \Request::input('status') == 'draft') ? 'btn-success' : 'btn-default'}}">Draft
+            @if(amountOfDraftOrders() > 0)
+                <span class="badge badge-danger">{{amountOfDraftOrders()}}</span>
+            @endif
+        </a>
     </div>
 		<div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>Daftar Penjualan hari ini ({{auth()->user()->store->name}})</h5>                        
-                        <div class="ibox-tools">{{\Carbon\Carbon::now()->format('d M Y')}}</div>
+                        <div class="ibox-tools">{{\Carbon\Carbon::today()->toDateString()}}</div>
                     </div>
                     <div class="ibox-content">
 
@@ -20,6 +24,7 @@
                             <thead>
                             <tr>
                                 <th>#</th>
+                                <th>WAKTU</th>
                                 <th>CUSTOMER</th>
                                 <th>QTY</th>
                                 <th>TOTAL HARGA</th>
@@ -31,7 +36,8 @@
                             <tbody>
                             @foreach($orders as $order)
 	                            <tr>
-	                                <td>{{$order->id}}</td>                                
+	                                <td>{{$order->id}}</td>  
+                                    <td>{{$order->created_at->format('d M Y')}}</td>                              
 	                                <td>{{$order->customer->name}}</td>                                
 	                                <td>{{$order->total_qty}}</td>                                
 	                                <td>{{toRp($order->total_price)}}</td> 
@@ -49,20 +55,20 @@
 	                            </tr>
                             @endforeach                            
                             <tr>
-                            	<td colspan="6"><h3 class="pull-right">TOTAL QTY:</h3></td>
+                            	<td colspan="7"><h3 class="pull-right">TOTAL QTY:</h3></td>
                             	<td><h3 class="pull-right"> {{$orders->sum('total_qty')}} PCS</h3></td>
                             </tr>
                             <tr>
-                                <td colspan="6"><h3 class="pull-right">TOTAL HARGA:</h3></td>
+                                <td colspan="7"><h3 class="pull-right">TOTAL HARGA:</h3></td>
                                 <td><h3 class="pull-right">{{toRp($orders->sum('total_price'))}}</h3></td>
                             </tr>
                             <tr>
-                            	<td colspan="6"><h3 class="pull-right">UANG MASUK:</h3></td>
+                            	<td colspan="7"><h3 class="pull-right">UANG MASUK:</h3></td>
                             	<td><h3 class="pull-right">{{toRp($totaluang)}}</h3></td>
                             </tr>
 
                             <tr>
-                                <td colspan="6"><h3 class="pull-right">UANG PENDING:</h3></td>
+                                <td colspan="7"><h3 class="pull-right">UANG PENDING:</h3></td>
                                 <td><h3 class="pull-right">{{toRp($orders->sum('total_price') -$totaluang)}}</h3></td>
                             </tr>
                             </tbody>

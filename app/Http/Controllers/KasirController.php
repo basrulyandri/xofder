@@ -49,7 +49,6 @@ class KasirController extends Controller
             $order->payment_method = 'tunai';
             $order->status = 'lunas';
             $order->tgl_dibayar = \Carbon\Carbon::now();
-            $order->cart_items = serialize(session('cart'));
             $order->total_qty = session('cart')->totalQty;
             $order->total_price = session('cart')->totalPrice;    
             $order->customer_id = 1;    
@@ -93,23 +92,41 @@ class KasirController extends Controller
                 $order->payment_method = 'tunai';
                 $order->status = 'draft';
                 $order->tgl_dibayar = \Carbon\Carbon::now();
-                $order->cart_items = serialize(session('cart'));
                 $order->total_qty = session('cart')->totalQty;
                 $order->total_price = session('cart')->totalPrice;
                 $order->save();
 
+                foreach(session('cart')->items as $key => $item){
+                \App\Item::create([
+                        'order_id' => $order->id,
+                        'product_id' => $key,
+                        'qty' => $item['qty'],
+                        'price' => $item['price']
+                    ]);
+                }
                 
                 
                 session()->forget('cart');
+            } else{
+                return redirect()->back()->with('error','Item barang harus diisi dulu');
             }
         }else{
             $order = Order::find($request->order_id);
             $order->status = 'draft';
             $order->tgl_dibayar = \Carbon\Carbon::now();
-            $order->cart_items = serialize(session('cart'));
             $order->total_qty = session('cart')->totalQty;
             $order->total_price = session('cart')->totalPrice;
             $order->save();
+
+            $order->items()->delete();
+            foreach(session('cart')->items as $key => $item){
+                \App\Item::create([
+                        'order_id' => $order->id,
+                        'product_id' => $key,
+                        'qty' => $item['qty'],
+                        'price' => $item['price']
+                    ]);
+                }
         }
 
         return redirect()->route('penjualan.hari.ini',['status' => 'draft']);
@@ -148,11 +165,19 @@ class KasirController extends Controller
 
                 $order->payment_method = 'tunai';
                 $order->status = 'draft';
-                $order->tgl_dibayar = \Carbon\Carbon::now();
-                $order->cart_items = serialize(session('cart'));
+                $order->tgl_dibayar = \Carbon\Carbon::now();                
                 $order->total_qty = session('cart')->totalQty;
                 $order->total_price = session('cart')->totalPrice;
                 $order->save();
+
+                foreach(session('cart')->items as $key => $item){
+                \App\Item::create([
+                        'order_id' => $order->id,
+                        'product_id' => $key,
+                        'qty' => $item['qty'],
+                        'price' => $item['price']
+                    ]);
+                }
                 
                 session()->forget('cart');
             }
@@ -160,10 +185,19 @@ class KasirController extends Controller
             $order = Order::find($request->order_id);
             $order->status = 'draft';
             $order->tgl_dibayar = \Carbon\Carbon::now();
-            $order->cart_items = serialize(session('cart'));
             $order->total_qty = session('cart')->totalQty;
             $order->total_price = session('cart')->totalPrice;
             $order->save();
+
+            $order->items()->delete();
+            foreach(session('cart')->items as $key => $item){
+                \App\Item::create([
+                        'order_id' => $order->id,
+                        'product_id' => $key,
+                        'qty' => $item['qty'],
+                        'price' => $item['price']
+                    ]);
+                }
         }
 
         return redirect()->route('penjualan.hari.ini',['status' => 'draft']);
@@ -171,23 +205,22 @@ class KasirController extends Controller
 
     public function finishtocustomer(Request $request)
     {        
+        //dd(session('cart')->orderId);
         if(session()->has('cart')){
-
-            $customer = Customer::where('name','LIKE','%'.$request->customer_name.'%')->first();
-
-            $order = new Order;
-            $order->user_id = auth()->user()->id;
-            $order->store_id = auth()->user()->store_id;            
-            $order->payment_method = 'tunai';
-            $order->status = 'pending';
-            $order->tgl_dibayar = \Carbon\Carbon::now();
-            $order->cart_items = serialize(session('cart'));
-            $order->total_qty = session('cart')->totalQty;
-            $order->total_price = session('cart')->totalPrice;  
-            if($customer){
-                    $order->customer_id = $customer->id;
+ 
+            if(!session('cart')->orderId){
+                $customer = Customer::where('name','LIKE','%'.$request->customer_name.'%')->first();
+                $order = new Order;
+                $order->user_id = auth()->user()->id;
+                $order->store_id = auth()->user()->store_id;            
+                $order->payment_method = 'tunai';
+                $order->status = 'pending';
+                $order->tgl_dibayar = \Carbon\Carbon::now();           
+                $order->total_qty = session('cart')->totalQty;
+                $order->total_price = session('cart')->totalPrice;  
+                if($customer){
+                        $order->customer_id = $customer->id;
                 }else{
-
                     //cek apakah nama customer yg diinput tidak kosong
                     if($request->customer_name == ''){
                         $order->customer_id = 1;                        
@@ -199,20 +232,13 @@ class KasirController extends Controller
                         $new_customer->save();
                         $order->customer_id = $new_customer->id;  
                     }
-                }  
+                } 
+                //dd($order->customer);
+
+            } else {
+                $order = Order::find(session('cart')->orderId);
+            }
             
-            //$order->save();
-
-            // foreach(session('cart')->items as $key => $item){
-            //     \App\Item::create([
-            //             'order_id' => $order->id,
-            //             'product_id' => $key,
-            //             'qty' => $item['qty'],
-            //             'price' => $item['price']
-            //         ]);
-            // }
-
-            //session()->forget('cart');
         } else {
             return redirect()->back()->with('error','Item barang harus diisi dulu');
         }
@@ -223,35 +249,61 @@ class KasirController extends Controller
     public function finishfinaltocustomer(Request $request)
     {
         //dd($request->all());
-        $order = json_decode($request->order);
-        //dd($order);
-        $order_baru = new Order;
-        $order_baru->user_id = auth()->user()->id;
-        $order_baru->store_id = auth()->user()->store_id;            
-        $order_baru->payment_method = 'tunai';
-        $order_baru->tgl_dibayar = \Carbon\Carbon::now();
-        $order_baru->cart_items = $order->cart_items;
-        $order_baru->total_qty = $order->total_qty;
-        $order_baru->total_price = $order->total_price;  
-        $order_baru->customer_id = $order->customer_id;
-        $order_baru->status = $request->pembayaran;                    
-        $order_baru->save();
+        if($request->has('order')){
+            $order = json_decode($request->order);
+            //dd(session('cart'));
+            $order_baru = new Order;
+            $order_baru->user_id = auth()->user()->id;
+            $order_baru->store_id = auth()->user()->store_id;            
+            $order_baru->payment_method = 'tunai';
+            $order_baru->tgl_dibayar = \Carbon\Carbon::now();
+            $order_baru->total_qty = $order->total_qty;
+            $order_baru->total_price = $order->total_price;  
+            $order_baru->customer_id = $order->customer_id;
+            $order_baru->status = $request->pembayaran;                    
+            $order_baru->save();
 
-        foreach(unserialize($order->cart_items)->items as $key => $item){
-            \App\Item::create([
+            foreach(session('cart')->items as $key => $item){
+                \App\Item::create([
+                        'order_id' => $order_baru->id,
+                        'product_id' => $key,
+                        'qty' => $item['qty'],
+                        'price' => $item['price']
+                    ]);
+            }
+
+            \App\Pembayaran::create([
                     'order_id' => $order_baru->id,
-                    'product_id' => $key,
-                    'qty' => $item['qty'],
-                    'price' => $item['price']
+                    'nominal' => ($request->pembayaran == 'hutang') ? $request->nominal : $order_baru->total_price,
                 ]);
-        }
+            session()->forget('cart');
+            return redirect()->route('penjualan.detail',$order_baru);
+            
+        } elseif($request->has('order_id')) {
+            $order = Order::find($request->order_id);
+            $order->payment_method = 'tunai';
+            $order->status = $request->pembayaran;
+            $order->save();
 
-        \App\Pembayaran::create([
-                'order_id' => $order_baru->id,
-                'nominal' => ($request->pembayaran == 'hutang') ? $request->nominal : $order_baru->total_price,
-            ]);
-        session()->forget('cart');
-        return redirect()->route('penjualan.detail',$order_baru);
+            $order->items()->delete();
+            foreach(session('cart')->items as $key => $item){
+                \App\Item::create([
+                        'order_id' => $order->id,
+                        'product_id' => $key,
+                        'qty' => $item['qty'],
+                        'price' => $item['price']
+                    ]);
+            }      
+
+            \App\Pembayaran::create([
+                    'order_id' => $order->id,
+                    'nominal' => ($request->pembayaran == 'hutang') ? $request->nominal : $order->total_price,
+                ]);      
+
+           
+        return redirect()->route('penjualan.detail',$order);
+        }
+        
     }
 
     public function finishtostore(Request $request)
@@ -291,11 +343,12 @@ class KasirController extends Controller
     public function penjualanhariini(Request $request)
     {
         if(!$request->has('status')){
-            $orders = Order::whereStoreId(auth()->user()->store->id)->whereStatus('lunas')->orWhere('status','=','hutang')->whereDate('created_at', \DB::raw('CURDATE()'))->orderBy('created_at','desc')->get();
+            $orders = Order::whereStoreId(auth()->user()->store->id)->whereIn('status',['lunas','hutang'])->whereDate('created_at','=', \Carbon\Carbon::today())->orderBy('created_at','desc')->get();
         } else if($request->status == 'draft'){
-            $orders = Order::whereStoreId(auth()->user()->store->id)->whereStatus('draft')->whereDate('created_at', \DB::raw('CURDATE()'))->orderBy('created_at','desc')->get();
+            $orders = Order::whereStoreId(auth()->user()->store->id)->whereStatus('draft')->whereDate('created_at', \Carbon\Carbon::today())->orderBy('created_at','desc')->get();
         }        
 
+        //dd($orders);
         $totaluang = 0;
         foreach($orders as $order){
             //dd($order->pembayaran);
@@ -308,9 +361,14 @@ class KasirController extends Controller
         return view('kasir.penjualanhariini',compact(['orders','totaluang']));
     }
 
-    public function penjualansemua()
+    public function penjualansemua(Request $request)
     {
-        $orders = Order::whereStoreId(auth()->user()->store->id)->paginate(30);
+        if($request->has('order_id')){
+            $orders = Order::whereStoreId(auth()->user()->store->id)->whereId($request->order_id)->orderBy('created_at','desc')->paginate(30);            
+        } else {
+            $orders = Order::whereStoreId(auth()->user()->store->id)->orderBy('created_at','desc')->paginate(30);
+        }
+
         return view('kasir.penjualansemua',compact(['orders']));
     }
 
@@ -319,7 +377,18 @@ class KasirController extends Controller
         if($order->status == 'lunas'){
             return redirect()->back()->with('error','Penjualan yang sudah selesai tidak bisa di edit lagi');
         }
-        session(['cart' => unserialize($order->cart_items)]);        
+
+        session(['cart' => new \App\Cart(null)]); 
+        session('cart')->totalQty = $order->total_qty;
+        session('cart')->totalPrice = $order->total_price;
+        session('cart')->orderId = $order->id;
+        foreach($order->items as $item){
+            session('cart')->items[$item->product_id]['qty'] = $item->qty;
+            session('cart')->items[$item->product_id]['price'] = $item->price;
+            session('cart')->items[$item->product_id]['item'] = $item->product;
+            session('cart')->items[$item->product_id]['stocks'] = $item->product->storeAvailableStocks();
+        }
+        //dd(session('cart'));      
         $products = Product::all();
         return view('kasir.editpenjualan',compact(['order','products']));
     }
@@ -329,10 +398,23 @@ class KasirController extends Controller
         $order = Order::find($request->id);
         $order->status = 'lunas';
         $order->tgl_dibayar = \Carbon\Carbon::now();
-        $order->cart_items = serialize(session('cart'));
         $order->total_qty = session('cart')->totalQty;
         $order->total_price = session('cart')->totalPrice;
         $order->save();
+        $order->items()->delete();
+        foreach(session('cart')->items as $key => $item){
+            \App\Item::create([
+                    'order_id' => $order->id,
+                    'product_id' => $key,
+                    'qty' => $item['qty'],
+                    'price' => $item['price']
+                ]);
+        }
+
+        \App\Pembayaran::create([
+                    'order_id' => $order->id,
+                    'nominal' => $order->total_price,
+                ]);
 
         return redirect()->route('penjualan.detail',$order);
         
@@ -363,6 +445,7 @@ class KasirController extends Controller
     public function deleteorder(Order $order)
     {
         $order->items()->delete();
+        $order->pembayaran()->delete();
         $order->delete();
         return redirect()->back()->with('success','Data Penjualan berhasil dihapus.');
     }
@@ -384,5 +467,25 @@ class KasirController extends Controller
     {
         $suppliers = Supplier::pluck('name','id')->prepend('Pilih Supplier','')->toArray();
         return view('kasir.productaddstock',compact('product','suppliers'));
+    }
+
+    public function bayarhutangpenjualan(Order $order)
+    {
+        return view('kasir.bayarhutangpenjualan',compact(['order']));
+    }
+
+    public function postbayarhutangpenjualan(Request $request)
+    {
+        $order = Order::find($request->order_id);
+        $pembayaran = $order->pembayaran()->create([
+                'nominal' => $request->nominal,
+            ]);
+
+        if($order->total_price <= $order->pembayaran->sum('nominal')){
+            $order->status = 'lunas';
+            $order->save();
+        }
+
+        return redirect()->route('penjualan.detail',$order);
     }
 }
