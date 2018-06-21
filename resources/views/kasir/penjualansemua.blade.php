@@ -1,6 +1,7 @@
 @extends('layouts.kasir.master')
 @section('header')
-	<link rel="stylesheet" href="{{asset('cashier')}}/bootstrap3-editable/css/bootstrap-editable.css">
+    <link href="{{asset('assets/backend')}}/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+	<link href="{{asset('assets/backend')}}/css/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet">
 @stop
 @section('content')
     <div class="row">    
@@ -11,7 +12,15 @@
                         <div class="form-group">
                             <label for="cari" class="sr-only">No. Order</label>
                             <input type="text" name="order_id" placeholder="No. Order" id="cari" class="form-control" value="{{\Request::input('order_id')}}">
-                        </div>                        
+                        </div>
+                        <div class="form-group" id="data_5">
+                                <label class="font-noraml"> Rentang Waktu</label>
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <input type="text" class="input-sm form-control" name="start" value="{{\Request::input('start')}}">
+                                    <span class="input-group-addon">s.d</span>
+                                    <input type="text" class="input-sm form-control" name="end" value="{{\Request::input('end')}}">
+                                </div>
+                            </div>                        
                         <button class="btn btn-white" type="submit">Cari</button>
                     </form>
                 </div>
@@ -61,7 +70,7 @@
                                         @endif  
 
                                         @if($order->status == 'hutang')
-                                            <a href="{{route('kasir.bayar.hutang.penjualan',$order)}}"" class="btn btn-sm btn-info">Bayar</a>
+                                            <a href="{{route('kasir.bayar.hutang.penjualan',$order)}}" class="btn btn-sm btn-info">Bayar</a>
                                         @endif 
 
 
@@ -78,10 +87,15 @@
 @stop
 
 @section('footer')
-
+ <script src="{{asset('assets//backend')}}/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="{{asset('assets//backend')}}/js/plugins/daterangepicker/daterangepicker.js"></script>
 <script>
 	$(document).ready(function(){
-		
+		$('#data_5 .input-daterange').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true
+            });
 	});
 </script>
 @stop

@@ -363,6 +363,7 @@ class KasirController extends Controller
 
     public function penjualansemua(Request $request)
     {
+        //dd($request->all());
         if($request->has('order_id')){
             $orders = Order::whereStoreId(auth()->user()->store->id)->whereId($request->order_id)->orderBy('created_at','desc')->paginate(30);            
         } else {
