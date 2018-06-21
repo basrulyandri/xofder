@@ -225,6 +225,13 @@ Route::group(['middleware' => 'rbac'],function(){
 			'as' => 'order.view',
 		]);
 
+	Route::get('reports/index', [
+			'uses' => 'ReportController@index',
+			'as' => 'report.index',
+		]);
+
+
+
 	Route::group(['prefix' => config('rollo-inventor.KASIR_PREFIX_URL')], function () {
 	    Route::get('/', [
 	    		'uses' => 'KasirController@index',

@@ -60,7 +60,16 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        if(in_array($this->role->name,['Superadmin','Administrator'])){
+        if(in_array($this->role->name,['Superadmin'])){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isAdministrator()
+    {
+        if(in_array($this->role->name,['Administrator'])){
             return true;
         }
 

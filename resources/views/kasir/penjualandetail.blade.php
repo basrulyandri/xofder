@@ -84,7 +84,7 @@
                             </table>
                             <div class="text-right">
                                 @if($order->status == 'hutang')
-                                    <a href="{{route('kasir.bayar.hutang.penjualan',$order)}}"" class="btn btn-success">Bayar</a>
+                                    <a href="{{route('kasir.bayar.hutang.penjualan',$order)}}" class="btn btn-success">Bayar</a>
                                 @endif
                                 <a href="{{route('order.print',$order)}}" class="btn btn-primary"><i class="fa fa-print"></i> Print</a>
                             </div>                            

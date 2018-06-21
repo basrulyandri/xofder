@@ -23,6 +23,7 @@
                 <li>
                     <a href="{{route('dashboard.index')}}"><i class="fa fa-diamond"></i> <span class="nav-label">Dashboard</span></a>
                 </li>
+                @if(auth()->user()->isAdmin())
                 <li class="">
                     <a href="#"><i class="fa fa-user"></i> <span class="nav-label">RBAC</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse" aria-expanded="false" style="height: 0px;">
@@ -31,6 +32,7 @@
                         <li><a href="{{route('permissions.index')}}">Permissions</a></li>
                     </ul>
                 </li>  
+                @endif
 
                 <li class="">
                     <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Barang</span> <span class="fa arrow"></span></a>
@@ -41,14 +43,16 @@
                 </li>  
                 
                 <li>
-                    <a href="{{route('orders.index')}}"><i class="fa fa-cart"></i> <span class="nav-label">Penjualan</span></a>
-                </li>            
+                    <a href="{{route('orders.index')}}"><i class="fa fa-money"></i> <span class="nav-label">Penjualan</span></a>
+                </li>
+                @if(auth()->user()->isAdmin())            
                 <li>
-                    <a href="{{route('kasir.index')}}"><i class="fa fa-cart"></i> <span class="nav-label">Kasir</span></a>
-                </li>            
+                    <a href="{{route('kasir.index')}}"><i class="fa fa-money"></i> <span class="nav-label">Kasir</span></a>
+                </li> 
+                @endif           
                 
                 <li>
-                    <a href="#"><i class="fa fa-pie-chart"></i> <span class="nav-label">Laporan</span></a>
+                    <a href="{{route('report.index')}}"><i class="fa fa-pie-chart"></i> <span class="nav-label">Laporan</span></a>
                 </li>            
             </ul>
 

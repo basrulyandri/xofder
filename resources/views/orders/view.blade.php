@@ -71,11 +71,18 @@
                             <table class="table invoice-total">
                                 <tbody>
                                 <tr>
-                                    <td><strong>TOTAL :</strong></td>
+                                    <td><strong>TOTAL BARANG :</strong></td>
+                                    <td>{{$order->total_qty}} PCS</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>TOTAL HARGA :</strong></td>
                                     <td>{{toRp($order->total_price)}}</td>
-                                </tr>                                
+                                </tr>
+
                                 </tbody>
                             </table>
+
+                            <div class="text-right"> <a href="{{route('order.print',$order)}}" class="btn btn-primary"><i class="fa fa-print"></i> Print</a></div>
                         </div>
 	</div>
 @stop
