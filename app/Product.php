@@ -3,6 +3,7 @@
 namespace App;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
+use App\Store;
 
 class Product extends Model
 {
@@ -57,7 +58,11 @@ class Product extends Model
 
     public function storeAvailableStocks()
     {
-        $userStore = auth()->user()->store;
+        if(auth()->user()->isKasir()){
+            $userStore = auth()->user()->store;
+        } else{
+            $userStore = Store::find(getSetting('main_store'));
+        }
         
         $user = auth()->user();
 

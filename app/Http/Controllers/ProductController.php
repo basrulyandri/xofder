@@ -50,12 +50,23 @@ class ProductController extends Controller
 
     public function postadd(Request $request)
     {
+        //dd($request->all());
     	$this->validate($request,[
     			'code' => 'required|unique:products,code',
     			'name' => 'required',
     			'category_id' => 'required|numeric',
     			'sell_price' => 'required|numeric'
     		]);
+
+        // $product = new Product;
+        // $product->code = $request->code;
+        // $product->name = $request->name;
+        // $product->category_id = $request->category_id;
+        // $product->sell_price = $request->sell_price;
+        // $product->description = $request->description;
+        // //dd($product);
+        // $product->save();
+
     	Product::create($request->all());
     	return redirect()->back()->with('success','Data barang baru berhasil ditambahkan');
     }

@@ -18,10 +18,30 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="wrapper wrapper-content">
-              
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">                        
+                        <h5>Penjualan</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">{{amountOfSuccessOrders()}}</h1>                        
+                        <small>Total</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">                        
+                        <h5>Stock Tersedia</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">{{amountOfTotalStocks()}}</h1>                        
+                        <small>PCS</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

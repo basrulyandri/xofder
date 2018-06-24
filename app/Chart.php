@@ -39,35 +39,47 @@ class Chart
 
     public function xAxis($title, array $categories)
     {
-    	$this->xAxis['title'] = $title;
+    	$this->xAxis['title'] = [];
+    	$this->xAxis['title']['text'] = $title;
     	$this->xAxis['categories'] = $categories;
     	return $this;
     }
 
     public function yAxis($title)
     {
-    	$this->xAxis['title'] = $title;
+    	$this->xAxis['title'] = [];
+    	$this->xAxis['title']['text'] = $title;
+    	return $this;
+    }
+
+    public function legend($titleText = '', $layout = 'vertical',$align = 'right',$verticalAlign = 'middle')
+    {
+    	$this->legend['title']['text'] = $titleText;
+    	$this->legend['layout'] = $layout;
+    	$this->legend['layout'] = $layout;
+    	$this->legend['align'] = $align;
+    	$this->legend['verticalAlign'] = $verticalAlign;
     	return $this;
     }
 
     public function series(array $series)
     {
     	if($this->chart['type'] == 'pie'){
-    		$this->series[0] = ['name' => 'Barang'];
+    		$this->series[0] = ['name' => 'Terjual'];
     		$this->series[0]['colorByPoint'] = true;
-    		$maxValue = [];
-    		foreach($series as $findMax){
-    			$maxValue[] = $findMax['data'];
-    		}
+    		// $maxValue = [];
+    		// foreach($series as $findMax){
+    		// 	$maxValue[] = $findMax['data'];
+    		// }
 
-    		$max = max($maxValue);
+    		// $max = max($maxValue);
 
 
     		foreach($series as $data){    			
 	    		$this->series[0]['data'][] = [
 	    			'name' => $data['name'],
 	    			'y' => $data['data'],
-	    			'sliced' => ($data['data'] == $max) ? true: false
+	    			// 'sliced' => ($data['data'] == $max) ? true: false
 	    		];
 	    	} 
     	} else {

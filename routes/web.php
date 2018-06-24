@@ -334,6 +334,20 @@ Route::group(['middleware' => 'rbac'],function(){
 	    		'uses' => 'KasirController@addproductstock',
 	    		'as' => 'kasir.product.addstock',
 	    	]);
+
+	    Route::post('product/{product}/addstock', [
+	    		'uses' => 'KasirController@insertproductstock',
+	    		'as' => 'kasir.insert.stock',
+	    	]);
+
+	    Route::get('ubah/password',[
+	    		'uses' => 'KasirController@ubahpassword',
+	    		'as' => 'kasir.ubah.password'
+	    	]);
+	     Route::post('ubah/password',[
+	    		'uses' => 'KasirController@postubahpassword',
+	    		'as' => 'post.kasir.ubah.password'
+	    	]);
 	});
 });
 

@@ -53,11 +53,13 @@
                     
                 </ul>
                 <ul class="nav navbar-top-links navbar-right">
-                    <li>
-                        <a href="{{route('auth.logout')}}">
-                            <i class="fa fa-sign-out"></i> Log out
-                        </a>
-                    </li>
+                    <li class="dropdown">
+                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Halo, {{auth()->user()->username}} <span class="caret"></span></a>
+                        <ul role="menu" class="dropdown-menu">
+                            <li><a href="{{route('kasir.ubah.password')}}"><i class="fa fa-lock"></i> Ubah Password</a></li>
+                            <li><a href="{{route('auth.logout')}}"><i class="fa fa-sign-out"></i> Log out</a></li>                         
+                        </ul>
+                    </li>                    
                 </ul>
             </div>
         </nav>

@@ -47,7 +47,7 @@
                             <tr>
                                 <td>{{$product->code}}</td>                                                           
                                 <td><a href="{{route('product.view',$product->id)}}">{{$product->name}}</a></td>
-                                <td>{{$product->availableStocks()}}</td>
+                                <td>{{$product->StoreAvailableStocks()}}</td>
                                 <td>{{toRp($product->sell_price)}}</td>
                                 <td>{{substr($product->description,0,50)}}</td>                                
                                 <td class="text-navy">

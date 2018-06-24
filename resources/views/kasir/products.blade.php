@@ -1,6 +1,8 @@
 @extends('layouts.kasir.master')
 @section('header')
-	
+	 <link href="{{url('assets/backend')}}/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="{{url('assets/backend')}}/css/plugins/dataTables/dataTables.responsive.css" rel="stylesheet">
+    <link href="{{url('assets/backend')}}/css/plugins/dataTables/dataTables.tableTools.min.css" rel="stylesheet">
 @stop
 @section('content')
 <div class="row">
@@ -24,7 +26,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <?php $i = ($products->currentPage() - 1) * $products->perPage() + 1; ?>
+                            <?php $i = 1;?>
                             @foreach($products as $product)
                             <tr>
                                 <td>{{$i}}</td>
@@ -45,9 +47,24 @@
                             </tbody>
                         </table>
 
-                        {{$products->links()}}
+                       
                     </div>
                 </div>
             </div>
         </div>
+@stop
+
+@section('footer')
+    <script src="{{url('assets/backend')}}/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="{{url('assets/backend')}}/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="{{url('assets/backend')}}/js/plugins/dataTables/dataTables.responsive.js"></script>
+<script src="{{url('assets/backend')}}/js/plugins/dataTables/dataTables.tableTools.min.js"></script>
+<script>
+        $(document).ready(function() {
+            $('#datatables').dataTable({
+                responsive: true,
+                pageLength:100,
+            });               
+        });        
+    </script>
 @stop

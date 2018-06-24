@@ -33,3 +33,16 @@ function amountOfDraftOrders()
 	return \App\Order::whereStatus('draft')->count();
 }
 
+function amountOfSuccessOrders(){
+	return \App\Order::whereIn('status',['hutang','lunas'])->count();	
+}
+
+function amountOfTotalStocks(){
+	$total = 0;
+	foreach(\App\Product::all() as $product){
+		$total += $product->availableStocks();
+	}
+
+	return $total;
+}
+

@@ -8,7 +8,9 @@
               <strong>Catatan ! </strong> Stock ini otomatis akan dimasukkan ke dalam stock Toko Blok F
             </div> -->
             <div class="col-lg-12">
-            {!!Form::open(['route' =>'post.product.addstock', 'class' => 'form-horizontal'])!!}
+            <h2>Tambah Stock {{$product->name}}</h2>
+            <br>
+            {!!Form::open(['route' =>['kasir.insert.stock',$product], 'class' => 'form-horizontal'])!!}
             <input type="hidden" name="product_id" value="{{$product->id}}">
 
             <div class='form-group{{$errors->has('tanggal') ? ' has-error' : ''}}'>

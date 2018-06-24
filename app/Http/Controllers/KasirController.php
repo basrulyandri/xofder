@@ -19,7 +19,7 @@ class KasirController extends Controller
     public function quick()
     {        
         session()->forget('cart');
-    	$products = Product::all();
+    	$products = Product::orderBy('name')->get();
     	return view('kasir.quick',compact('products'));
     }
 
@@ -248,7 +248,13 @@ class KasirController extends Controller
 
     public function finishfinaltocustomer(Request $request)
     {
-        //dd($request->all());
+        // Jika input nominal tidak diisi
+        if($request->nominal == ""){
+            $nominal = 0;
+        } else {
+            $nominal = $request->nominal;
+        }
+        //dd($nominal);
         if($request->has('order')){
             $order = json_decode($request->order);
             //dd(session('cart'));
@@ -274,7 +280,7 @@ class KasirController extends Controller
 
             \App\Pembayaran::create([
                     'order_id' => $order_baru->id,
-                    'nominal' => ($request->pembayaran == 'hutang') ? $request->nominal : $order_baru->total_price,
+                    'nominal' => ($request->pembayaran == 'hutang') ? $nominal : $order_baru->total_price,
                 ]);
             session()->forget('cart');
             return redirect()->route('penjualan.detail',$order_baru);
@@ -297,7 +303,7 @@ class KasirController extends Controller
 
             \App\Pembayaran::create([
                     'order_id' => $order->id,
-                    'nominal' => ($request->pembayaran == 'hutang') ? $request->nominal : $order->total_price,
+                    'nominal' => ($request->pembayaran == 'hutang') ? $nominal : $order->total_price,
                 ]);      
 
            
@@ -453,7 +459,7 @@ class KasirController extends Controller
 
     public function stocks()
     {
-        $products = Product::paginate(30);
+        $products = Product::get();
         return view('kasir.products',compact(['products']));
     }
 
@@ -468,6 +474,21 @@ class KasirController extends Controller
     {
         $suppliers = Supplier::pluck('name','id')->prepend('Pilih Supplier','')->toArray();
         return view('kasir.productaddstock',compact('product','suppliers'));
+    }
+
+    public function insertproductstock(Request $request)
+    {
+        $this->validate($request,[
+                'tanggal' => 'required',
+                'stock_in' => 'required|numeric',
+                'stock_from_id' => 'required|numeric',              
+            ]);
+        $request->request->add(['user_id' => auth()->user()->id]);
+        $request->request->add(['store_id'=> auth()->user()->store->id]);
+        $request->request->add(['stock_from'=>'supplier']);     
+        //dd($request->all());
+        Stock::create($request->all());
+        return redirect()->route('kasir.stock.product.view',$request->product_id)->with('success','Stock berhasil ditambahkan');
     }
 
     public function bayarhutangpenjualan(Order $order)
@@ -488,5 +509,33 @@ class KasirController extends Controller
         }
 
         return redirect()->route('penjualan.detail',$order);
+    }
+
+    public function ubahpassword()
+    {
+        return view('kasir.ubahpassword');
+    }
+
+    public function postubahpassword(Request $request)
+    {
+        $this->validate($request, [
+            'old_password' => 'required',            
+            'new_password' => 'required|confirmed|min:8',
+        ],
+        [
+            'confirmed' => '2 Kolom Password baru harus sama.',
+            'min' => 'Password minimal 8 karakter'
+        ]);
+
+        if (!\Hash::check($request->old_password, auth()->user()->password))
+        {
+            return redirect()->back()->with('error','Password Lama salah atau tidak cocok !');
+        }
+
+        $user = auth()->user();
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+        auth()->logout();
+        return redirect()->route('auth.login')->with('message-success','Password Berhasil diubah, silahkan login lagi.');
     }
 }

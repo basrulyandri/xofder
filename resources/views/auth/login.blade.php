@@ -23,11 +23,13 @@
             <div>
 
                 <h1 class="logo-name" style="font-size: 70px">REDFOX</h1>
-                @if(\Session::has('message-success'))
+                @if(session('message-success'))
                 <div class="alert alert-success">
                     <p><i class="fa fa-check"></i> {{session('message-success')}}</p>
                 </div>
                 @endif
+
+
             </div>
            
             <form class="m-t" role="form" action="{!!route('auth.dologin')!!}" method="post">
