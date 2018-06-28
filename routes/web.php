@@ -10,7 +10,9 @@
 | to using a Closure or controller method. Build something great!
 |
 */
-
+Route::get('sql',function(){
+	Artisan::call('mysql-dump');
+});
 
 Route::post('addtocart', [
 	'uses' => 'CartController@addtocart',
@@ -326,8 +328,13 @@ Route::group(['middleware' => 'rbac'],function(){
 	    		'as' => 'kasir.stocks.index',
 	    	]);
 	    Route::get('stock/product/{product}/view', [
-	    		'uses' => 'KasirController@stockproductview',
+	    		'uses' => 'KasirController@productview',
 	    		'as' => 'kasir.stock.product.view',
+	    	]);
+
+	     Route::get('stock/bydate', [
+	    		'uses' => 'KasirController@stocksbydate',
+	    		'as' => 'kasir.stocks.bydate',
 	    	]);
 
 	    Route::get('product/{product}/addstock', [
@@ -338,6 +345,11 @@ Route::group(['middleware' => 'rbac'],function(){
 	    Route::post('product/{product}/addstock', [
 	    		'uses' => 'KasirController@insertproductstock',
 	    		'as' => 'kasir.insert.stock',
+	    	]);
+
+	    Route::get('stock/{stock}/delete',[
+	    		'uses' => 'KasirController@deletestock',
+	    		'as' => 'kasir.stock.delete'
 	    	]);
 
 	    Route::get('ubah/password',[

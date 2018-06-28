@@ -6,10 +6,24 @@
 @stop
 @section('content')
 <div class="row">
-        <div class="col-lg-12">
+    <div class="col-lg-3">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <i class="fa fa-info-circle"></i> Stock Masuk
+            </div>
+            <div class="panel-body">
+                <div class="list-group">
+                    <a class="list-group-item active" href="{{route('kasir.stocks.index')}}">Stock Tiap Barang</a>
+                    <a class="list-group-item" href="{{route('kasir.stocks.bydate')}}">Stock Masuk Berdasarkan tanggal</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+        <div class="col-lg-9">
                 <div class="ibox float-e-margins">     
                 	<div class="ibox-title">
-                		<h2>List Stock Barang</h2>
+                		<h5>Stock Tiap Barang</h5>
                 	</div>               
                     <div class="ibox-content">
 

@@ -463,10 +463,11 @@ class KasirController extends Controller
         return view('kasir.products',compact(['products']));
     }
 
-    public function stockproductview(Product $product)
+    public function productview(Product $product)
     {
         //$stocks = $product->stocks()->whereStockFrom('supplier')->orderBy('tanggal','desc')->orderBy('created_at','desc')->paginate(20);        
-        $stocks = $product->stocks()->whereStoreId(auth()->user()->store_id)->where('stock_in','!=',0)->orderBy('tanggal','desc')->orderBy('created_at','desc')->paginate(20);        
+        $stocks = $product->stocks()->whereStoreId(auth()->user()->store_id)->where('stock_in','!=',0)->orderBy('tanggal','desc')->orderBy('created_at','desc')->limit(20)->get(); 
+       
         return view('kasir.productview',compact('product','stocks'));
     }
 
@@ -537,5 +538,23 @@ class KasirController extends Controller
         $user->save();
         auth()->logout();
         return redirect()->route('auth.login')->with('message-success','Password Berhasil diubah, silahkan login lagi.');
+    }
+
+    public function deletestock(Stock $stock)
+    {
+        $stock->delete();
+        return redirect()->back()->with('success','Stock Berhasil dihapus.');
+    }
+
+    public function stocksbydate(Request $request)
+    {
+        if(!$request->has('tanggal')){
+            $stocks = Stock::where('stock_in','!=',0)->whereStoreId(auth()->user()->store->id)->orderBy('tanggal','desc')->paginate(30);
+        } else{
+            $stocks = Stock::where('stock_in','!=',0)->whereTanggal($request->tanggal)->whereStoreId(auth()->user()->store->id)->orderBy('tanggal','desc')->paginate(30);
+        }
+
+        //dd($stocks);
+        return view('kasir.stocksbydate',compact(['stocks']));
     }
 }

@@ -12,15 +12,10 @@
             
         </div>
         <div class="col-sm-8">
-            <div class="title-action"> 
-                <form role="form" class="form-inline">
-                    
+            <div class="title-action">                 
+                <form method="GET" class="form-inline" id="formPeriod" >                    
                     <div class="form-group">
-                        <form method="GET" class="inline-form" id="formPeriod" >
-                         {!!Form::select('period',['7' => '7 Hari Terakhir','28' => '28 Hari Terakhir'],\Request::input('period'),['class' => 'form-control'])!!}                           
-
-                            <input type="submit" class="btn btn-info" value="OK"/>
-                        </form>
+                         {!!Form::select('period',['7' => '7 Hari Terakhir','28' => '28 Hari Terakhir'],\Request::input('period'),['class' => 'form-control','id' => 'period'])!!}                                                 
                     </div>                
                 </form>
             </div>
@@ -59,8 +54,9 @@
            Highcharts.chart('penjualan', {!!json_encode($penjualanChart)!!});
            Highcharts.chart('piePenjualanProduct', {!!json_encode($piePenjualanProduct)!!});
 
-           $('#period').change(function(){
-                $('form[id="formPeriod"]').submit();
+           $('#period').change(function(){ 
+           console.log($('#formPeriod'));           
+                $('#formPeriod').submit();
            });
         });        
     </script>
