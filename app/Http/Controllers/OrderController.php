@@ -13,10 +13,10 @@ class OrderController extends Controller
 	public function index(Request $request)
 	{
 		if($request->store_id == ''){
-			$orders = Order::paginate(20);			
+			$orders = Order::orderBy('created_at','desc')->paginate(20);			
 		} else {
 			$store = Store::find($request->store_id);
-			$orders = $store->orders()->paginate(20);
+			$orders = $store->orders()->orderBy('created_at','desc')->paginate(20);
 		}
 		return view('orders.index',compact('orders'));
 	}

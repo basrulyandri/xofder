@@ -33,7 +33,7 @@
 
                                 <div class="col-sm-6 text-right">                                    
                                     <h4 class="text-navy">NO. {{$order->id}}</h4>
-                                    <span class="label label-{{$order->statusLabel()}}">{{$order->status}}</span><br><br>
+                                    <span class="label @if($order->status == 'lunas') label-primary @else label-danger @endif">{{strtoupper($order->status)}}</span><br><br>
                                     <address>
                                     kepada:<strong>{{$order->customer->name}}</strong><br>
                                         <i class="fa fa-map-marker"></i> {{$order->kasir->store->address}}<br>
@@ -77,6 +77,10 @@
                                 <tr>
                                     <td><strong>TOTAL HARGA :</strong></td>
                                     <td>{{toRp($order->total_price)}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>HUTANG :</strong></td>
+                                    <td><span class="label label-warning">{{toRp($order->total_price - $order->pembayaran->sum('nominal'))}}</span></td>
                                 </tr>
 
                                 </tbody>

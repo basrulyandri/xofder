@@ -21,7 +21,7 @@
         <div class="col-sm-8">
             <div class="title-action">                  
                     
-                <a href="{{route('product.add')}}" class="btn btn-success"><i class="fa fa-plus"></i> Penjualan</a>
+               
             </div>
         </div> 
     </div>   
@@ -61,7 +61,7 @@
                                 <td>{{$order->total_qty}}</td>                                                           
                                 <td>{{toRp($order->total_price)}}</td>
                                 <td>{{$order->payment_method}}</td>
-                                <td>{{$order->status}}</td>                                
+                                <td><span class="label @if($order->status == 'lunas') label-primary @else label-danger @endif">{{strtoupper($order->status)}}</span></td>                                
                                 <td>{{$order->kasir->username}} <small>({{$order->kasir->store->name}})</small> </td>                                
                                 <td class="text-navy">
                                     <a href="{{route('order.view',$order)}}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> Lihat</a>
