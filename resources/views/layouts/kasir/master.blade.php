@@ -50,7 +50,7 @@
                     <span class="badge badge-danger">{{amountOfProductsHasMinimunStock()}}</span>
                     @endif
                     </a></li>
-                    
+                    <li><a href="{{route('kasir.report')}}">Laporan</a></li>
                 </ul>
                 <ul class="nav navbar-top-links navbar-right">
                     <li class="dropdown">

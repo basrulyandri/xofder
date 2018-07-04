@@ -3,6 +3,7 @@
 	<link rel="stylesheet" href="{{asset('cashier')}}/bootstrap3-editable/css/bootstrap-editable.css">
 @stop
 @section('content')
+
 	<div class="row">
     <div class="col-lg-12">
         <a href="{{route('penjualan.hari.ini')}}" class="btn btn-sm {{(!\Request::has('status'))? 'btn-success' : 'btn-default'}}">Selesai</a>
@@ -12,7 +13,7 @@
             @endif
         </a>
     </div>
-		<div class="col-lg-12">
+		<div class="col-lg-9">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>Daftar Penjualan hari ini ({{auth()->user()->store->name}})</h5>                        
@@ -49,38 +50,56 @@
                                     @endif
                                     @if($order->status == 'draft')                               
                                         <a href="{{route('penjualan.edit',$order)}}"" class="btn btn-sm btn-warning">Edit</a>
-                                    @endif                                    
+                                    @endif    
+                                    <a href="{{route('order.print',$order)}}" class="btn btn-sm btn-primary"><i class="fa fa-print"></i> Print</a>                                
                                         <button id="{{$order->id}}" class="btn btn-sm btn-danger">Hapus</a>
 	                                </td>
 	                            </tr>
                             @endforeach                            
+                           
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <table>
                             <tr>
-                            	<td colspan="7"><h3 class="pull-right">TOTAL QTY:</h3></td>
-                            	<td><h3 class="pull-right"> {{$orders->sum('total_qty')}} PCS</h3></td>
+                                <td><h5>TOTAL QTY:</h5></td>
+                                <td><h5 class="pull-right"> {{$orders->sum('total_qty')}} PCS</h5></td>
                             </tr>
                             <tr>
-                                <td colspan="7"><h3 class="pull-right">TOTAL HARGA:</h3></td>
-                                <td><h3 class="pull-right">{{toRp($orders->sum('total_price'))}}</h3></td>
+                                <td><h5>TOTAL HARGA:</h5></td>
+                                <td><h5 class="pull-right">{{toRp($orders->sum('total_price'))}}</h3></td>
                             </tr>
                             <tr>
-                            	<td colspan="7"><h3 class="pull-right">UANG MASUK:</h3></td>
-                            	<td><h3 class="pull-right">{{toRp($totaluang)}}</h3></td>
+                                <td><h5>UANG MASUK:</h5></td>
+                                <td><h5 class="pull-right">{{toRp($totaluang)}}</h5></td>
                             </tr>
 
                             <tr>
-                                <td colspan="7"><h3 class="pull-right">UANG PENDING:</h3></td>
-                                <td><h3 class="pull-right">{{toRp($orders->sum('total_price') -$totaluang)}}</h3></td>
+                                <td><h5>UANG PENDING:</h5></td>
+                                <td><h5 class="pull-right">{{toRp($orders->sum('total_price') -$totaluang)}}</h5></td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-12">
+                 <div class="ibox-content">
+                    <div id="columnPenjualanProduct"></div>
+                </div>
+            </div>
 	</div>
 @stop
 
 @section('footer')
-
+<script type="text/javascript" src="{{asset('assets/backend/js/plugins/highcharts/highcharts.js')}}"></script>
 <script>
 	$(document).ready(function(){
 		$('body').on('click','.btn-danger',function(){
@@ -99,7 +118,8 @@
                     window.location = "{{url('/')}}/kasir/penjualan/"+id+"/delete";
                   }
                 });
-              });   
+              }); 
+        Highcharts.chart('columnPenjualanProduct', {!!json_encode($columnPenjualanProduct)!!});  
 	});
 </script>
 @stop

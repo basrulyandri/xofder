@@ -6,3 +6,6 @@ Transaksi antar toko harusnya di validasi kedua toko. Pengirim dan penerima
 
 
 fungsi edit penjualan ke customer masih belum sempurna. Harusnya ketika di edit dan klik tombol "selesai" aplikasi menanyakan pembayaran
+
+Pembayaran sering dikasih diskon. Biasanya karena sesuaikan kembalian receh.
+

@@ -22,6 +22,7 @@
                                 </div>
                             </div>                        
                         <button class="btn btn-white" type="submit">Cari</button>
+                        <a href="{{route('penjualan.semua')}}" class="btn btn-white">Clear</a>
                     </form>
                 </div>
             </div>
@@ -69,6 +70,7 @@
                                             <a href="{{route('penjualan.edit',$order)}}"" class="btn btn-sm btn-warning">Edit</a>
                                         @endif  
 
+                                        <a href="{{route('order.print',$order)}}" class="btn btn-sm btn-primary"><i class="fa fa-print"></i> Print</a>
                                         @if($order->status == 'hutang')
                                             <a href="{{route('kasir.bayar.hutang.penjualan',$order)}}" class="btn btn-sm btn-info">Bayar</a>
                                         @endif 
@@ -94,7 +96,8 @@
 		$('#data_5 .input-daterange').datepicker({
                 keyboardNavigation: false,
                 forceParse: false,
-                autoclose: true
+                autoclose: true,
+                format: 'yyyy-mm-dd'
             });
 	});
 </script>

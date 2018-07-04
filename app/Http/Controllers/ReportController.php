@@ -65,23 +65,41 @@ class ReportController extends Controller
     			->xAxis('Nilai',$tanggalSeries)
     			->yAxis('Penjualan')
                 ->legend('Klik untuk sembunyikan.')
+                ->plotOptions([
+                    'enabled' =>  true,
+                    'borderRadius'=> 2,
+                    'y'=> -10,
+                    'shape' => 'callout'])
     			->series($series);
 
     	$products = Product::all();
     	$piePenjualanProductSeries = [];
     	foreach($products as $product){
+
+            //dd($product->ordersItem()->whereBetween('created_at',[Carbon::now()->subDays((!$request->has('period') || $request->period == 7) ? 7 : 28)->toDateString(),Carbon::now()->toDateString()])->sum('qty'));
+
     		if($product->ordersItem()->whereBetween('created_at',[Carbon::now()->subDays((!$request->has('period') || $request->period == 7) ? 7 : 28)->toDateString(),Carbon::now()->toDateString()])->sum('qty') > 0){
 	    		$piePenjualanProductSeries[] = [
 	    			'name' => $product->name,
-	    			'data' => $product->ordersItem->sum('qty')
+	    			'data' => intval($product->ordersItem()->whereBetween('created_at',[Carbon::now()->subDays((!$request->has('period') || $request->period == 7) ? 7 : 28)->toDateString(),Carbon::now()->toDateString()])->sum('qty'))
 	    		];	    		  			
     		}
     	}
 
     	$piePenjualanProduct = new Chart('pie');
     	$piePenjualanProduct->title('Penjualan berdasarkan Barang '.((!$request->has('period') || $request->period == 7) ? '7 Hari Terakhir' : '28 Hari Terakhir'))
+                             ->plotOptions([
+                                'enabled' =>  true,
+                                'borderRadius'=> 2,
+                                'y'=> -10,
+                                'shape' => 'callout'])
     						->series($piePenjualanProductSeries);
-    	
-    	return view('reports.index',compact(['penjualanChart','piePenjualanProduct']));
+                            
+    	if(auth()->user()->isKasir()){
+            return view('kasir.report',compact(['penjualanChart','piePenjualanProduct']));
+        } else {
+
+    	   return view('reports.index',compact(['penjualanChart','piePenjualanProduct']));
+        }
     }
 }

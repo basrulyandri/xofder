@@ -1,26 +1,16 @@
 <?php
 
 namespace App;
-use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 use App\Store;
 
 class Product extends Model
 {
-	use Sluggable;
+	
 
     protected $fillable = ['code','name','slug','category_id','sell_price'];
 
     protected $dates = ['tanggal'];
-
-    public function sluggable()
-    {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
-    }
 
     public function category()
     {

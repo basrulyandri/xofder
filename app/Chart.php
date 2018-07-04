@@ -18,7 +18,7 @@ class Chart
 	public $yAxis = [
 		'title' => 'yAxis'
 	];
-
+    public $plotOptions = [];
 	public $series= [];
 
 	public function __construct($type = 'line')
@@ -40,7 +40,7 @@ class Chart
     public function xAxis($title, array $categories)
     {
     	$this->xAxis['title'] = [];
-    	$this->xAxis['title']['text'] = $title;
+    	$this->xAxis['title']['text'] = $title;        
     	$this->xAxis['categories'] = $categories;
     	return $this;
     }
@@ -60,6 +60,12 @@ class Chart
     	$this->legend['align'] = $align;
     	$this->legend['verticalAlign'] = $verticalAlign;
     	return $this;
+    }
+
+    public function plotOptions(array $dataLabels)
+    {
+        $this->plotOptions['series']['dataLabels'] = $dataLabels;
+        return $this;
     }
 
     public function series(array $series)
@@ -82,13 +88,20 @@ class Chart
 	    			// 'sliced' => ($data['data'] == $max) ? true: false
 	    		];
 	    	} 
-    	} else {
+    	} else if($this->chart['type'] == 'column '){
     		foreach($series as $data){
 	    		$this->series[] = [
 	    			'name' => $data['name'],
-	    			'data' => $data['data']
+	    			'data' => [$data['data']]
 	    		];
 	    	} 
-    	}
+    	} else {
+            foreach($series as $data){
+                $this->series[] = [
+                    'name' => $data['name'],
+                    'data' => $data['data']
+                ];
+            } 
+        }
     }
 }

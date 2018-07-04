@@ -9,6 +9,10 @@ use App\Customer;
 use App\Store;
 use App\Stock;
 use App\Supplier;
+use App\Chart;
+use App\Pembayaran;
+use Carbon\Carbon;
+
 
 class KasirController extends Controller
 {
@@ -352,7 +356,26 @@ class KasirController extends Controller
             $orders = Order::whereStoreId(auth()->user()->store->id)->whereIn('status',['lunas','hutang'])->whereDate('created_at','=', \Carbon\Carbon::today())->orderBy('created_at','desc')->get();
         } else if($request->status == 'draft'){
             $orders = Order::whereStoreId(auth()->user()->store->id)->whereStatus('draft')->whereDate('created_at', \Carbon\Carbon::today())->orderBy('created_at','desc')->get();
-        }        
+        }
+
+        $products = Product::all();
+        $columnPenjualanProductSeries = [];
+        $productCategories = [\Carbon\Carbon::today()->format('d M Y')];
+        foreach($products as $product){
+            if($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::today())->sum('qty') > 0){                
+                $columnPenjualanProductSeries[] = [
+                    'name' => $product->name,
+                    'data' => [intval($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::today())->sum('qty'))]
+                ];                          
+            }
+        }  
+
+        //dd(\Carbon\Carbon::today()); 
+
+        $columnPenjualanProduct = new Chart('column');
+        $columnPenjualanProduct->title('Penjualan berdasarkan barang hari ini')->xAxis('',$productCategories)
+                            ->series($columnPenjualanProductSeries);
+
 
         //dd($orders);
         $totaluang = 0;
@@ -364,17 +387,31 @@ class KasirController extends Controller
         }
 
 
-        return view('kasir.penjualanhariini',compact(['orders','totaluang']));
+        return view('kasir.penjualanhariini',compact(['orders','totaluang','columnPenjualanProduct']));
     }
 
     public function penjualansemua(Request $request)
     {
         //dd($request->all());
         if($request->has('order_id')){
-            $orders = Order::whereStoreId(auth()->user()->store->id)->whereId($request->order_id)->orderBy('created_at','desc')->paginate(30);            
+            if($request->has('start') && $request->has('end')){
+                $orders = Order::whereStoreId(auth()->user()->store->id)
+                            ->whereId($request->order_id)
+                            ->whereBetween('created_at',[\Carbon\Carbon::createFromFormat('Y-m-d',$request->start),\Carbon\Carbon::createFromFormat('Y-m-d',$request->end)]);
+            } else {
+                $orders = Order::whereStoreId(auth()->user()->store->id)
+                            ->whereId($request->order_id);                           
+            }
         } else {
-            $orders = Order::whereStoreId(auth()->user()->store->id)->orderBy('created_at','desc')->paginate(30);
+            if($request->has('start') && $request->has('end')){
+               $orders = Order::whereStoreId(auth()->user()->store->id)
+                            ->whereBetween('created_at',[\Carbon\Carbon::createFromFormat('Y-m-d',$request->start),\Carbon\Carbon::createFromFormat('Y-m-d',$request->end)]);
+            } else {
+                $orders = Order::whereStoreId(auth()->user()->store->id);
+            }
         }
+
+        $orders = $orders->orderBy('created_at','desc')->paginate(30);
 
         return view('kasir.penjualansemua',compact(['orders']));
     }
@@ -557,4 +594,5 @@ class KasirController extends Controller
         //dd($stocks);
         return view('kasir.stocksbydate',compact(['stocks']));
     }
+
 }

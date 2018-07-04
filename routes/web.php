@@ -360,6 +360,10 @@ Route::group(['middleware' => 'rbac'],function(){
 	    		'uses' => 'KasirController@postubahpassword',
 	    		'as' => 'post.kasir.ubah.password'
 	    	]);
+	     Route::get('laporan',[
+	    		'uses' => 'ReportController@index',
+	    		'as' => 'kasir.report'
+	    	]);
 	});
 });
 
