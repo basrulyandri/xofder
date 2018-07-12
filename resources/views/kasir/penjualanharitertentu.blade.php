@@ -11,7 +11,7 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>Penjualan ({{auth()->user()->store->name}})</h5>                        
-                        <div class="ibox-tools">{{\Carbon\Carbon::today()->format('d M Y')}}</div>
+                        <div class="ibox-tools">{{\Carbon\Carbon::parse(\Request::input('tanggal'))->format('d M Y')}}</div>
                     </div>
                     <div class="ibox-content">
 
@@ -19,9 +19,9 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>WAKTU</th>
                                 <th>CUSTOMER</th>
-                                <th>QTY</th>
+                                <th>BARANG</th>
+                                <th>TOTAL QTY</th>
                                 <th>TOTAL HARGA</th>
                                 <th>BAYAR</th>
                                 <th>STATUS</th>
@@ -32,8 +32,12 @@
                             @foreach($orders as $order)
 	                            <tr>
 	                                <td>{{$order->id}}</td>  
-                                    <td>{{$order->created_at->format('d M Y')}}</td>                              
-	                                <td>{{$order->customer->name}}</td>                                
+	                                <td>{{$order->customer->name}}</td>  
+                                    <td>
+                                        @foreach($order->items as $item)
+                                            <small>{{$item->product->name}} ({{$item->qty}})</small><br>
+                                        @endforeach
+                                    </td>                              
 	                                <td>{{$order->total_qty}}</td>                                
 	                                <td>{{toRp($order->total_price)}}</td> 
                                     <td>{{toRp($order->pembayaran->sum('nominal'))}}</td>                               
@@ -55,24 +59,29 @@
                         </table>
                     </div>
                 </div>
+
+                <div class="ibox-content">
+                    <div id="columnPenjualanProduct"></div>
+                </div>
+
             </div>
 
             <div class="col-lg-3">
-            <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <h5>Pilih Tanggal</h5>
-                           
-                        </div>
-                        <div class="ibox-content">                          
-                        <form id="formTanggal">
-                            <div class="form-group" id="data_1">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="tanggal" id="tanggal" value="{{\Request::input('tanggal')}}">
-                                </div>
+                <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Pilih Tanggal</h5>
+                               
                             </div>
-                        </form>                          
+                            <div class="ibox-content">                          
+                            <form id="formTanggal">
+                                <div class="form-group" id="data_1">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="tanggal" id="tanggal" value="{{\Request::input('tanggal')}}">
+                                    </div>
+                                </div>
+                            </form>                          
+                            </div>
                         </div>
-                    </div>
                 <div class="ibox float-e-margins">
                     <div class="ibox-content">
                         <table>
@@ -97,13 +106,31 @@
                         </table>
                     </div>
                 </div>
+
+                <div class="ibox float-e-margins">    
+                    <div class="ibox-title">
+                        <h5>Barang Terjual</h5>                               
+                    </div>                
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            @foreach($productSold as $ps)
+                            <li class="list-group-item">
+                                <span class="badge badge-primary">{{$ps->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse(\Request::input('tanggal')))->sum('qty')}}</span>
+                                {{$ps->name}}
+                            </li>
+                            @endforeach
+                            
+                        </ul>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="col-lg-12">
-                 <div class="ibox-content">
-                    <div id="columnPenjualanProduct"></div>
-                </div>
-            </div>
+            
+                
+            
+
+           
 
             @else
                 <div class="col-lg-12">

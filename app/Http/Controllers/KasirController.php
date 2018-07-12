@@ -360,9 +360,11 @@ class KasirController extends Controller
 
         $products = Product::all();
         $columnPenjualanProductSeries = [];
+        $productSold = [];
         $productCategories = [\Carbon\Carbon::today()->format('d M Y')];
         foreach($products as $product){
-            if($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::today())->sum('qty') > 0){                
+            if($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::today())->sum('qty') > 0){             
+                $productSold[] = $product;   
                 $columnPenjualanProductSeries[] = [
                     'name' => $product->name,
                     'data' => [intval($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::today())->sum('qty'))]
@@ -379,8 +381,7 @@ class KasirController extends Controller
                                     'enabled' =>  true,
                                     'borderRadius'=> 2,
                                     'y'=> -10,
-                                    'shape' => 'callout',
-                                    'format' => 'this.x'])
+                                    'shape' => 'callout'])
                                 ->series($columnPenjualanProductSeries);
 
 
@@ -394,7 +395,7 @@ class KasirController extends Controller
         }
 
 
-        return view('kasir.penjualanhariini',compact(['orders','totaluang','columnPenjualanProduct']));
+        return view('kasir.penjualanhariini',compact(['orders','totaluang','columnPenjualanProduct','productSold']));
     }
 
     public function penjualanharitertentu(Request $request)
@@ -407,9 +408,11 @@ class KasirController extends Controller
 
         $products = Product::all();
         $columnPenjualanProductSeries = [];
-        $productCategories = [\Carbon\Carbon::today()->format('d M Y')];
+        $productSold = [];
+        $productCategories = [\Carbon\Carbon::parse($request->tanggal)->format('d M Y')];
         foreach($products as $product){
-            if($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->sum('qty') > 0){                
+            if($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->sum('qty') > 0){   
+                $productSold[] = $product;              
                 $columnPenjualanProductSeries[] = [
                     'name' => $product->name,
                     'data' => [intval($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->sum('qty'))]
@@ -420,7 +423,7 @@ class KasirController extends Controller
         //dd(\Carbon\Carbon::today()); 
 
         $columnPenjualanProduct = new Chart('column');
-        $columnPenjualanProduct->title('Penjualan berdasarkan barang hari ini')
+        $columnPenjualanProduct->title('Penjualan berdasarkan barang '.\Carbon\Carbon::parse(\Request::input('tanggal'))->format('d M Y'))
                                 ->xAxis('',$productCategories)
                                 ->plotOptions([
                                     'enabled' =>  true,
@@ -441,7 +444,7 @@ class KasirController extends Controller
         }
 
 
-        return view('kasir.penjualanharitertentu',compact(['orders','totaluang','columnPenjualanProduct']));
+        return view('kasir.penjualanharitertentu',compact(['orders','totaluang','columnPenjualanProduct','productSold']));
         
     }
 
