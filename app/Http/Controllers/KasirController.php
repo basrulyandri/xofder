@@ -373,8 +373,15 @@ class KasirController extends Controller
         //dd(\Carbon\Carbon::today()); 
 
         $columnPenjualanProduct = new Chart('column');
-        $columnPenjualanProduct->title('Penjualan berdasarkan barang hari ini')->xAxis('',$productCategories)
-                            ->series($columnPenjualanProductSeries);
+        $columnPenjualanProduct->title('Penjualan berdasarkan barang hari ini')
+                                ->xAxis('',$productCategories)
+                                ->plotOptions([
+                                    'enabled' =>  true,
+                                    'borderRadius'=> 2,
+                                    'y'=> -10,
+                                    'shape' => 'callout',
+                                    'format' => 'this.x'])
+                                ->series($columnPenjualanProductSeries);
 
 
         //dd($orders);

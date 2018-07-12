@@ -7,5 +7,18 @@ Transaksi antar toko harusnya di validasi kedua toko. Pengirim dan penerima
 
 fungsi edit penjualan ke customer masih belum sempurna. Harusnya ketika di edit dan klik tombol "selesai" aplikasi menanyakan pembayaran
 
-Pembayaran sering dikasih diskon. Biasanya karena sesuaikan kembalian receh.
+* Pembayaran sering dikasih diskon. Biasanya karena sesuaikan kembalian receh atau kasih THR ke pelanggan
+
+* adakan search product di halaman penjualan. Soalnya productnya banyak.
+
+* Penjualan semua ada filter untuk menampilkan penjualan tanggal tertentu dengan rincian sama seperti penjualan hari ini.
+
+
+Petunjuk Debug
+-- error di tooltips highchart, tambahkan ->plotOptions([
+                    'enabled' =>  true,
+                    'borderRadius'=> 2,
+                    'y'=> -10,
+                    'shape' => 'callout'])
+
 
