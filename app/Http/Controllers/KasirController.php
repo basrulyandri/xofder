@@ -397,6 +397,54 @@ class KasirController extends Controller
         return view('kasir.penjualanhariini',compact(['orders','totaluang','columnPenjualanProduct']));
     }
 
+    public function penjualanharitertentu(Request $request)
+    {
+        if(!$request->has('tanggal')){
+            return view('kasir.penjualanharitertentu');
+        }
+
+        $orders = Order::whereStoreId(auth()->user()->store->id)->whereIn('status',['lunas','hutang'])->whereDate('created_at','=', \Carbon\Carbon::parse($request->tanggal))->orderBy('created_at','desc')->get();
+
+        $products = Product::all();
+        $columnPenjualanProductSeries = [];
+        $productCategories = [\Carbon\Carbon::today()->format('d M Y')];
+        foreach($products as $product){
+            if($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->sum('qty') > 0){                
+                $columnPenjualanProductSeries[] = [
+                    'name' => $product->name,
+                    'data' => [intval($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->sum('qty'))]
+                ];                          
+            }
+        }  
+
+        //dd(\Carbon\Carbon::today()); 
+
+        $columnPenjualanProduct = new Chart('column');
+        $columnPenjualanProduct->title('Penjualan berdasarkan barang hari ini')
+                                ->xAxis('',$productCategories)
+                                ->plotOptions([
+                                    'enabled' =>  true,
+                                    'borderRadius'=> 2,
+                                    'y'=> -10,
+                                    'shape' => 'callout',
+                                    ])
+                                ->series($columnPenjualanProductSeries);
+
+
+        //dd($orders);
+        $totaluang = 0;
+        foreach($orders as $order){
+            //dd($order->pembayaran);
+            foreach($order->pembayaran()->whereDate('created_at', \Carbon\Carbon::parse($request->tanggal))->get() as $pembayaran){
+                $totaluang = $totaluang + $pembayaran->nominal;                
+            }
+        }
+
+
+        return view('kasir.penjualanharitertentu',compact(['orders','totaluang','columnPenjualanProduct']));
+        
+    }
+
     public function penjualansemua(Request $request)
     {
         //dd($request->all());

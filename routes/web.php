@@ -288,6 +288,11 @@ Route::group(['middleware' => 'rbac'],function(){
 	    		'as' => 'penjualan.hari.ini',
 	    	]);
 
+	     Route::get('/penjualan/hari-tertentu', [
+	    		'uses' => 'KasirController@penjualanharitertentu',
+	    		'as' => 'penjualan.hari.tertentu',
+	    	]);
+
 	    Route::get('/penjualan/semua', [
 	    		'uses' => 'KasirController@penjualansemua',
 	    		'as' => 'penjualan.semua',

@@ -41,6 +41,7 @@
                         <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Penjualan <span class="caret"></span></a>
                         <ul role="menu" class="dropdown-menu">
                             <li><a href="{{route('penjualan.hari.ini')}}">Hari Ini</a></li>
+                            <li><a href="{{route('penjualan.hari.tertentu')}}">Hari Tertentu</a></li>
                             <li><a href="{{route('penjualan.semua')}}">Semua</a></li>                            
                         </ul>
                     </li>
