@@ -12,6 +12,8 @@ use App\Supplier;
 use App\Chart;
 use App\Pembayaran;
 use Carbon\Carbon;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 
 class KasirController extends Controller
@@ -443,7 +445,9 @@ class KasirController extends Controller
             }
         }
 
-
+        if($request->has('print')){
+            $this->printAll($request,$orders);
+        }
         return view('kasir.penjualanharitertentu',compact(['orders','totaluang','columnPenjualanProduct','productSold']));
         
     }
@@ -651,6 +655,43 @@ class KasirController extends Controller
 
         //dd($stocks);
         return view('kasir.stocksbydate',compact(['stocks']));
+    }
+
+
+    public function printAll($request,$orders)
+    {
+        $no = 1;
+
+        // dd($order->store->name);
+        $connector = new WindowsPrintConnector("ZJ-58");        
+        $printer = new Printer($connector);
+        $printer -> initialize();
+
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->setTextSize(2,1);
+        $printer->text(getSetting('company_name')."\n");
+        $printer->setTextSize(1,1);
+        $printer->text(\App\Store::find(getSetting('main_store'))->name."\n\n");
+
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->text("Tanggal: ".\Carbon\Carbon::parse($request->tanggal)->format('d M Y')."\n");
+
+        $printer->text("===============================\n");
+        foreach($orders as $order){
+            foreach($order->items as $item){
+                $printer->text($no." ".$item->product->name."(".$item->qty.") ".toRp($item->price * $item->qty)."\n");
+                $no++;
+            }
+        }
+
+        $printer->text("===============================\n\n");
+        $printer->text("TOTAL QTY: ".$orders->sum('total_qty')." PCS \n");
+        $printer->text("TOTAL HARGA: ".toRp($orders->sum('total_price'))."\n\n\n\n");
+        $printer->cut();
+        
+        /* Close printer */
+        $printer -> close();
+        return redirect()->back();
     }
 
 }

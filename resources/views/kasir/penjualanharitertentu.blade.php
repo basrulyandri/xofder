@@ -7,6 +7,9 @@
 
 	<div class="row">
         @if(\Request::has('tanggal'))
+        <div class="col-lg-12">
+            <a href="{{url()->full()}}&print=true" class="btn btn-primary"><i class="fa fa-print"></i> Print All</a>
+        </div>
 		<div class="col-lg-9">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
