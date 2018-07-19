@@ -10,9 +10,6 @@
 | to using a Closure or controller method. Build something great!
 |
 */
-Route::get('sql',function(){
-	Artisan::call('mysql-dump');
-});
 
 Route::post('addtocart', [
 	'uses' => 'CartController@addtocart',
@@ -232,6 +229,16 @@ Route::group(['middleware' => 'rbac'],function(){
 			'as' => 'report.index',
 		]);
 
+	Route::get('orders/edittanggal', [
+			'uses' => 'OrderController@edittanggal',
+			'as' => 'orders.edit.tanggal',
+		]);
+
+	Route::post('orders/updatetanggal', [
+			'uses' => 'OrderController@updatetanggal',
+			'as' => 'orders.update.tanggal',
+		]);
+
 
 
 	Route::group(['prefix' => config('rollo-inventor.KASIR_PREFIX_URL')], function () {
@@ -409,6 +416,11 @@ Route::post('resetpassword/{reset_password_code}',[
 Route::get('order/{order}/print', [
 		'uses' => 'OrderController@cetak',
 		'as' => 'order.print',
+	]);
+
+Route::get('pembayaran/{pembayaran}/{order}/print', [
+		'uses' => 'PembayaranController@print',
+		'as' => 'pembayaran.print',
 	]);
 
 // Ajax

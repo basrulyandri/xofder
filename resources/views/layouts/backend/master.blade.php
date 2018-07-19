@@ -81,6 +81,14 @@
                   timer: 3000,
                   showConfirmButton: true });
           @endif
+
+          @if(Session::has('error'))
+            swal({title: "ERROR",
+                  type: 'error',
+                  text: "{{Session::get('error')}} !",
+                  timer: 3000,
+                  showConfirmButton: true });
+          @endif
     </script>
     @yield('footer')
 </body>

@@ -98,7 +98,6 @@ class ReportController extends Controller
     	if(auth()->user()->isKasir()){
             return view('kasir.report',compact(['penjualanChart','piePenjualanProduct']));
         } else {
-
     	   return view('reports.index',compact(['penjualanChart','piePenjualanProduct']));
         }
     }

@@ -20,7 +20,7 @@
         </div>
         <div class="col-sm-8">
             <div class="title-action">                  
-                    
+                    <a class="btn btn-success" href="{{route('orders.edit.tanggal')}}">Edit Penjualan</a>
                
             </div>
         </div> 
@@ -53,7 +53,7 @@
                                 <th>ACTION</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody>                            
                             @foreach($orders as $order)
                             <tr>
                                 <td>{{$order->id}}</td>

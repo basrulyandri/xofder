@@ -81,6 +81,42 @@ class OrderController extends Controller
 	    return redirect()->back();
 	}
 
+	public function edittanggal()
+	{
+		return view('orders.edittanggal');
+	}
+
+	public function updatetanggal(Request $request)
+	{
+		//dd($request->tanggal);
+		$orders = explode(',',$request->orders);
+		foreach($orders as $idOrder){
+			$check = Order::find($idOrder);
+			if(!$check){
+				return redirect()->back()->with('error','Ada no penjualan yang salah');
+			}
+		}
+
+		foreach($orders as $order){
+			$order = Order::find($order);
+			$order->tgl_dibayar = $request->tanggal;
+			$order->created_at = $request->tanggal;
+			$order->save();
+
+			foreach($order->items as $item){
+				$item->created_at = $request->tanggal;
+				$item->save();
+			}
+
+			foreach($order->pembayaran as $pembayaran){
+				$pembayaran->created_at = $request->tanggal;
+				$pembayaran->save();
+			}
+		}
+
+		return redirect()->back()->with('success','Data penjualan berhasil diubah.');
+	}
+
 	// Function khusus untuk judul printer
 	function title(Printer $printer, $text)
 	{
@@ -88,4 +124,6 @@ class OrderController extends Controller
 	    $printer -> text("\n-------- " . $text." --------\n");
 	    $printer -> selectPrintMode(); // Reset
 	}
+
+
 }

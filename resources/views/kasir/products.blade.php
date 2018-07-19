@@ -9,12 +9,12 @@
     <div class="col-lg-3">
         <div class="panel panel-info">
             <div class="panel-heading">
-                <i class="fa fa-info-circle"></i> Stock Masuk
+                <i class="fa fa-info-circle"></i> Manajemen Stock 
             </div>
             <div class="panel-body">
                 <div class="list-group">
                     <a class="list-group-item active" href="{{route('kasir.stocks.index')}}">Stock Tiap Barang</a>
-                    <a class="list-group-item" href="{{route('kasir.stocks.bydate')}}">Stock Masuk Berdasarkan tanggal</a>
+                    <a class="list-group-item" href="{{route('kasir.stocks.bydate')}}">Riwayat Stock Berdasarkan tanggal</a>
                 </div>
             </div>
 

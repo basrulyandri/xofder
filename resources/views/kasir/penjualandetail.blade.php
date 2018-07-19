@@ -92,4 +92,41 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="wrapper wrapper-content animated fadeInRight">
+                    <div class="ibox-title">
+                        <h5>Riwayat Pembayaran</h5>
+                    </div>
+                    <div class="ibox-content p-xl">
+                        <div class="row">
+                            <div class="col-sm-12">
+                            <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>TANGGAL</th>
+                                <th>NOMINAL</th>
+                                <th>ACTION</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($order->pembayaran()->orderBy('created_at','desc')->get() as $pembayaran)
+                            <tr>
+                                <td>{{$pembayaran->id}}</td>
+                                <td>{{$pembayaran->created_at->format('d M Y')}}</td>
+                                <td>{{toRp($pembayaran->nominal)}}</td>
+                                <td><a href="{{route('pembayaran.print',[$pembayaran,$order])}}" class="btn btn-xs btn-info"><i class="fa fa-print"></i> Print</a></td>
+                            </tr>
+                            @endforeach
+                            
+                            </tbody>
+                        </table> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 @stop

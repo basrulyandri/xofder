@@ -446,7 +446,7 @@ class KasirController extends Controller
         }
 
         if($request->has('print')){
-            $this->printAll($request,$orders);
+            $this->printAll($request,$productSold,$orders);
         }
         return view('kasir.penjualanharitertentu',compact(['orders','totaluang','columnPenjualanProduct','productSold']));
         
@@ -565,7 +565,7 @@ class KasirController extends Controller
     public function productview(Product $product)
     {
         //$stocks = $product->stocks()->whereStockFrom('supplier')->orderBy('tanggal','desc')->orderBy('created_at','desc')->paginate(20);        
-        $stocks = $product->stocks()->whereStoreId(auth()->user()->store_id)->where('stock_in','!=',0)->orderBy('tanggal','desc')->orderBy('created_at','desc')->limit(20)->get(); 
+        $stocks = $product->stocks()->whereStoreId(auth()->user()->store_id)->orderBy('tanggal','desc')->orderBy('created_at','desc')->limit(20)->get(); 
        
         return view('kasir.productview',compact('product','stocks'));
     }
@@ -647,10 +647,11 @@ class KasirController extends Controller
 
     public function stocksbydate(Request $request)
     {
+
         if(!$request->has('tanggal')){
-            $stocks = Stock::where('stock_in','!=',0)->whereStoreId(auth()->user()->store->id)->orderBy('tanggal','desc')->paginate(30);
+            $stocks = Stock::whereStoreId(auth()->user()->store->id)->orderBy('tanggal','desc')->paginate(30);
         } else{
-            $stocks = Stock::where('stock_in','!=',0)->whereTanggal($request->tanggal)->whereStoreId(auth()->user()->store->id)->orderBy('tanggal','desc')->paginate(30);
+            $stocks = Stock::whereTanggal($request->tanggal)->whereStoreId(auth()->user()->store->id)->orderBy('tanggal','desc')->paginate(30);
         }
 
         //dd($stocks);
@@ -658,7 +659,7 @@ class KasirController extends Controller
     }
 
 
-    public function printAll($request,$orders)
+    public function printAll($request,$productSold,$orders)
     {
         $no = 1;
 
@@ -677,12 +678,18 @@ class KasirController extends Controller
         $printer->text("Tanggal: ".\Carbon\Carbon::parse($request->tanggal)->format('d M Y')."\n");
 
         $printer->text("===============================\n");
-        foreach($orders as $order){
-            foreach($order->items as $item){
-                $printer->text($no." ".$item->product->name."(".$item->qty.") ".toRp($item->price * $item->qty)."\n");
+
+        foreach ($productSold as $product) {
+                $ps = $product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->input('tanggal')));
+                 $printer->text($no." ".$product->name." ".$ps->sum('qty')."\n");
                 $no++;
-            }
         }
+        // foreach($orders as $order){
+        //     foreach($order->items as $item){
+        //         $printer->text($no." ".$item->product->name."(".$item->qty.") ".toRp($item->price * $item->qty)."\n");
+        //         $no++;
+        //     }
+        // }
 
         $printer->text("===============================\n\n");
         $printer->text("TOTAL QTY: ".$orders->sum('total_qty')." PCS \n");

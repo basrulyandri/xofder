@@ -19,9 +19,10 @@
                             <tr>
                                 <th>NO</th>
                                 <th>TANGGAL</th>
-                                <th>STOCK MASUK</th>                                
+                                <th>STOCK MASUK</th>  
+                                <th>STOCK KELUAR</th>                              
                                 <th>USER</th>                                                              
-                                <th>DARI</th>                                
+                                <th>DARI/KE</th>                                
                                 <th>CATATAN</th> 
                                 <th>ACTION</th>
                             </tr>
@@ -32,9 +33,10 @@
                             <tr>
                                 <td>{{$i}}</td>
                                 <td>{{$stock->tanggal->format('d M Y')}}</td>
-                                <td>{{$stock->stock_in}}</td>                                
+                                <td>{{$stock->stock_in}}</td>
+                                <td>{{$stock->stock_out}}</td>                                
                                 <td>{{$stock->user->username}}</td>
-                                <td>{{stockFrom($stock)}}</td>
+                                <td>{{$stock->supplier->name}}</td>
                                 <td>{{$stock->description}}</td>                                
                                 <td class="text-navy">
                                     @if($stock->created_at->isToday())                                    

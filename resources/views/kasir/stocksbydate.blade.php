@@ -8,12 +8,12 @@
     <div class="col-lg-3">
         <div class="panel panel-info">
             <div class="panel-heading">
-                <i class="fa fa-info-circle"></i> Stock Masuk
+                <i class="fa fa-info-circle"></i> Manajemen Stock
             </div>
             <div class="panel-body">
                 <div class="list-group">
                     <a class="list-group-item" href="{{route('kasir.stocks.index')}}">Stock Tiap Barang</a>
-                    <a class="list-group-item active" href="{{route('kasir.stocks.bydate')}}">Stock Masuk Berdasarkan tanggal</a>
+                    <a class="list-group-item active" href="{{route('kasir.stocks.bydate')}}">Riwayat Stock Berdasarkan tanggal</a>
                 </div>
             </div>
 
@@ -40,8 +40,9 @@
                                 <th>NO</th>
                                 <th>TANGGAL</th>
                                 <th>BARANG</th> 
-                                <th>STOCK MASUK</th>                                                              
-                                <th>DARI</th> 
+                                <th>STOCK MASUK</th>
+                                <th>STOCK KELUAR</th>                                        
+                                <th>DARI/KE</th> 
                                 <th>USER</th>                                
                                 <th>ACTION</th>
                             </tr>
@@ -54,6 +55,7 @@
                                 <td>{{$stock->tanggal->format('d M Y')}}</td>             
                                 <td><a href="{{route('kasir.stock.product.view',$stock->product)}}">{{$stock->product->name}}</a></td>
                                 <td>{{$stock->stock_in}}</td>
+                                <td>{{$stock->stock_out}}</td>
                                 <td>{{$stock->supplier->name}}</td>
                                 <td>{{$stock->user->username}}</td>                             
                                 <td class="text-navy">
