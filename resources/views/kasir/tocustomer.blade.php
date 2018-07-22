@@ -1,6 +1,7 @@
 @extends('layouts.kasir.master')
 @section('header')
 	<link rel="stylesheet" href="{{asset('cashier')}}/bootstrap3-editable/css/bootstrap-editable.css">
+	<link rel="stylesheet" href="{{asset('cashier/css')}}/select2.min.css">
 @stop
 @section('content')
 
@@ -102,32 +103,22 @@
 						<div class="panel button-sizes">
 							<div class="panel-heading">
 								<div class="panel-title pn">
-									<h3 class="mtn mb10 fw400">BARANG</h3>
+									<h3 class="mtn mb10 fw400">LIST BARANG</h3>
+									<small>Barang yang ada list bawah ini adalah barang yang stoknya tersedia.</small>
 								</div>
 							</div>
-							<div class="panel-body mtn" id="list-data-barang">
-								<div class="bs-component mb20">									
-									@if(session()->has('cart'))
-										@foreach($products as $product)
-											@if(!array_key_exists($product->id,session('cart')->items))
-												@if($product->isStoreHasStocksAvailable())
-													<button product_id="{{$product->id}}" type="button" class="btn btn-primary btn-block btn-add-data-barang" style="font-size: 11px;">{{$product->name}} ({{$product->storeAvailableStocks()}})</button>
-												@else
-													<button product_id="{{$product->id}}" type="button" class="btn btn-dark btn-block disabled" style="font-size: 11px;">{{$product->name}} ({{$product->storeAvailableStocks()}})</button>
-												@endif
-											@endif
-										@endforeach
-									@else
-										@foreach($products as $product)			
-											@if($product->isStoreHasStocksAvailable())								
-												<button product_id="{{$product->id}}" type="button" class="btn btn-primary btn-block btn-add-data-barang" style="font-size: 11px;">{{$product->name}} ({{$product->storeAvailableStocks()}})</button>
-											@else
-												<button product_id="{{$product->id}}" type="button" class="btn btn-dark btn-block disabled" style="font-size: 11px;">{{$product->name}} ({{$product->storeAvailableStocks()}})</button>
-											@endif
-										@endforeach
-									@endif
-								</div>								
-							</div>
+							<div class='form-group{{$errors->has('supplier_id') ? ' has-error' : ''}}' style="    padding: 0 10px;">
+				                <select name="stock_from_id" id="listBarang" class="form-control" style="width:100%;">
+				                    @foreach($availableProducts as $key => $product)
+				                    	<option value="{{ $key }}">{{ $product }}</option>
+				                    @endforeach
+				                </select>
+				                @if($errors->has('supplier_id'))
+				                  <span class="help-block">{{$errors->first('supplier_id')}}</span>
+				                @endif				              	
+				              </div>
+
+							
 						</div>
 					</div>
 					<div class="clearfix"> </div>
@@ -139,6 +130,7 @@
 @section('footer')
 <script src="{{asset('cashier')}}/bootstrap3-editable/js/bootstrap-editable.js"></script>
 <script src="{{asset('assets/backend/js/plugins/jquery-ui/jquery-ui.min.js')}}"></script>
+<script src="{{asset('cashier/js')}}//select2.min.js"></script>
 <script>
 	$(document).ready(function(){
 		$.fn.editable.defaults.mode = 'popup';
@@ -209,6 +201,24 @@
 	  			// });
 	  		}
     	}); 
+    	$('#listBarang').select2();
+		$('#listBarang').select2('open');
+
+    	$('#listBarang').on('select2:select', function (e) { 
+			var el = $(this);
+			var product_id = $(this).val();
+			var _token = '{{Session::token()}}';
+			$.ajax({
+			  type: "POST",
+			  url: "{{route('ajax.post.addtocart')}}",
+			  data: { product_id : product_id, _token:_token },
+			}).success(function(data){
+				console.log(data.cart);
+				//$('#list-data-barang').html(data.viewlistbarang);				
+				$('#list-penjualan').html(data.viewlistpenjualan);				
+			});
+		    $(this).select2('open');
+		});
     	
 	});
 </script>

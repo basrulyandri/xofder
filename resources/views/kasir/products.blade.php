@@ -46,7 +46,7 @@
                                 <td>{{$i}}</td>
                                 <td>{{$product->code}}</td>                                                           
                                 <td><a href="{{route('kasir.stock.product.view',$product)}}">{{$product->name}}</a></td>
-                                <td><span class="label @if($product->storeAvailableStocks() > 100) label-primary @else label-danger @endif">{{$product->storeAvailableStocks()}}</span></td>
+                                <td><span class="label @if($product->storeAvailableStocks() > 100) label-primary @else label-danger @endif">{{$product->available_stocks}}</span></td>
                                 <td>{{toRp($product->sell_price)}}</td>
                                 <td>{{substr($product->description,0,50)}}</td>                                
                                 <td class="text-navy">

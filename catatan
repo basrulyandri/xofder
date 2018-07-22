@@ -21,4 +21,7 @@ Petunjuk Debug
                     'y'=> -10,
                     'shape' => 'callout'])
 
+-- update 1.1.0
+	--> tambah field available_stocks di table products
+
 

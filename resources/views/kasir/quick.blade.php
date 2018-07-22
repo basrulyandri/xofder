@@ -92,6 +92,7 @@
 							<div class="panel-heading">
 								<div class="panel-title pn">
 									<h3 class="mtn mb10 fw400">BARANG</h3>
+									<small>Barang yang ada list bawah ini adalah barang yang stoknya tersedia.</small>
 								</div>
 							</div>
 							<div class="panel-body mtn" id="list-data-barang">

@@ -19,6 +19,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);  
     	if(Auth::attempt(['email' => $request->input('email'),'password' => $request->input('password')])){
+            updateProductsAvailableStocks();
             
             if(auth()->user()->isKasir()){
                 return redirect()->route('kasir.index');

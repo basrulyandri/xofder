@@ -16,6 +16,18 @@ function stockFrom($stock){
 	}
 }
 
+function totalProductsHasMinimunStock()
+{
+	$amount = 0;
+	foreach(\App\Product::all() as $product){
+		if($product->storeAvailableStocks() < 100 ){
+			$amount++;
+		}
+	}
+
+	return $amount;
+}
+
 function amountOfProductsHasMinimunStock()
 {
 	$amount = 0;
@@ -44,5 +56,23 @@ function amountOfTotalStocks(){
 	}
 
 	return $total;
+}
+
+function updateProductsAvailableStocks($products = null)
+{
+
+	if(!$products){
+		$products = \App\Product::all();				
+	}
+
+	if($products instanceof Illuminate\Database\Eloquent\Collection){
+		foreach($products as $product){
+			$product->available_stocks = $product->storeAvailableStocks();
+			$product->save();
+		}
+	}else{
+		$products->available_stocks = $products->storeAvailableStocks();
+		$products->save();
+	}
 }
 

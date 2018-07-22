@@ -30,7 +30,7 @@ class Cart
     		}
     	}
     	$storedItem['qty']++;    	
-        $storedItem['stocks'] = Product::find($id)->storeAvailableStocks();
+        $storedItem['stocks'] = Product::find($id)->available_stocks;
     	$this->items[$id] = $storedItem;        
     	$this->totalQty++;
     	$this->totalPrice += $item->sell_price;

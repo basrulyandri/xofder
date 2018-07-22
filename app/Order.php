@@ -21,6 +21,15 @@ class Order extends Model
         return $this->hasMany(Item::class);
     }
 
+    public function products()
+    {
+        $products = $this->items->map(function($item){
+            return \App\Product::find($item->product_id);
+        });
+
+        return $products;
+    }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);

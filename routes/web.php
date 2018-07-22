@@ -11,6 +11,16 @@
 |
 */
 
+Route::get('checkorder',function(){
+	$order = \App\Order::find(7);
+	if($order->products() instanceof Illuminate\Database\Eloquent\Collection){
+		echo 'true';
+	}else {
+		echo 'false';
+	}
+	//dd($order->products());
+});
+
 Route::post('addtocart', [
 	'uses' => 'CartController@addtocart',
 	'as'	 => 'ajax.post.addtocart'

@@ -51,7 +51,7 @@ class CartController extends Controller
 		// Cek stok barang, apakah tersedia untuk qty yang dinginkan
 		$product = Product::find($request->pk);
 		$alert = false;
-		if($request->value > $product->storeAvailableStocks()){
+		if($request->value > $product->available_stocks){
 			$alert = true;
 		} else {
 			$cart->editQty($request->pk,$request->value);			

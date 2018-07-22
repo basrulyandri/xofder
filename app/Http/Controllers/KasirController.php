@@ -25,24 +25,24 @@ class KasirController extends Controller
     public function quick()
     {        
         session()->forget('cart');
-    	$products = Product::orderBy('name')->get();
-    	return view('kasir.quick',compact('products'));
+        $availableProducts = \App\Product::where('available_stocks','>',0)->pluck('name','id')->prepend('Pilih Barang','')->toArray();
+        return view('kasir.quick_new',compact('availableProducts'));
     }
 
     public function tostore()
     {
         session()->forget('cart');
-        $products = Product::all();
+        $availableProducts = \App\Product::where('available_stocks','>',0)->pluck('name','id')->prepend('Pilih Barang','')->toArray();
         $stores = Store::whereNotIn('id',[auth()->user()->store_id])->pluck('name','id')->prepend('Pilih Toko','')->toArray();        
 
-        return view('kasir.tostore',compact('products','stores'));
+        return view('kasir.tostore',compact('availableProducts','stores'));
     }
 
     public function tocustomer()
     {
         session()->forget('cart');
-        $products = Product::all();
-        return view('kasir.tocustomer',compact('products'));
+         $availableProducts = \App\Product::where('available_stocks','>',0)->pluck('name','id')->prepend('Pilih Barang','')->toArray();
+        return view('kasir.tocustomer',compact('products','availableProducts'));
     }
 
     public function finish()
@@ -74,6 +74,7 @@ class KasirController extends Controller
                     'nominal' => $order->total_price,
                 ]);
 
+            updateProductsAvailableStocks($order->products());
             session()->forget('cart');
 
         } else {
@@ -289,6 +290,7 @@ class KasirController extends Controller
                     'nominal' => ($request->pembayaran == 'hutang') ? $nominal : $order_baru->total_price,
                 ]);
             session()->forget('cart');
+            updateProductsAvailableStocks($order_baru->products());
             return redirect()->route('penjualan.detail',$order_baru);
             
         } elseif($request->has('order_id')) {
@@ -311,7 +313,7 @@ class KasirController extends Controller
                     'order_id' => $order->id,
                     'nominal' => ($request->pembayaran == 'hutang') ? $nominal : $order->total_price,
                 ]);      
-
+            updateProductsAvailableStocks($order->products());
            
         return redirect()->route('penjualan.detail',$order);
         }
@@ -346,6 +348,7 @@ class KasirController extends Controller
                     ]);
             }
         }
+        updateProductsAvailableStocks();
 
         return redirect()->back()->with('success','Berhasil memindahkan stock antar Toko');
     }
@@ -558,6 +561,7 @@ class KasirController extends Controller
 
     public function stocks()
     {
+        updateProductsAvailableStocks();
         $products = Product::get();
         return view('kasir.products',compact(['products']));
     }
@@ -588,6 +592,7 @@ class KasirController extends Controller
         $request->request->add(['stock_from'=>'supplier']);     
         //dd($request->all());
         Stock::create($request->all());
+        updateProductsAvailableStocks(Product::find($request->product_id));
         return redirect()->route('kasir.stock.product.view',$request->product_id)->with('success','Stock berhasil ditambahkan');
     }
 

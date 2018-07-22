@@ -47,11 +47,18 @@
                     </li>
 
                     <li><a href="{{route('kasir.stocks.index')}}">Stocks 
-                    @if(amountOfProductsHasMinimunStock() > 0)
-                    <span class="badge badge-danger">{{amountOfProductsHasMinimunStock()}}</span>
+                    @if(totalProductsHasMinimunStock() > 0)
+                    <span class="badge badge-danger">{{totalProductsHasMinimunStock()}}</span>
                     @endif
                     </a></li>
-                    <li><a href="{{route('kasir.report')}}">Laporan</a></li>
+                    <li class="dropdown">
+                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Laporan <span class="caret"></span></a>
+                        <ul role="menu" class="dropdown-menu">
+                            <li><a href="{{route('kasir.report')}}">Semua</a></li>
+                            <li><a href="{{route('kasir.report')}}">Bulanan</a></li>                            
+                        </ul>
+                    </li>
+                    
                 </ul>
                 <ul class="nav navbar-top-links navbar-right">
                     <li class="dropdown">
