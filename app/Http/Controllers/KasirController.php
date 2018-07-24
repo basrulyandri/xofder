@@ -409,13 +409,21 @@ class KasirController extends Controller
             return view('kasir.penjualanharitertentu');
         }
 
+
+
         $orders = Order::whereStoreId(auth()->user()->store->id)->whereIn('status',['lunas','hutang'])->whereDate('created_at','=', \Carbon\Carbon::parse($request->tanggal))->orderBy('created_at','desc')->get();
 
         $products = Product::all();
         $columnPenjualanProductSeries = [];
         $productSold = [];
+        $productStockIn= [];
         $productCategories = [\Carbon\Carbon::parse($request->tanggal)->format('d M Y')];
         foreach($products as $product){
+            $productHasStockInToday = $product->stocks()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->where('stock__from','=','supplier')->sum('stock_in');
+            if($productHasStockInToday > 0) {
+                $productStockIn[] = ['product' => $product,'stock_in' => $productHasStockInToday];
+            }
+
             if($product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->sum('qty') > 0){   
                 $productSold[] = $product;              
                 $columnPenjualanProductSeries[] = [
@@ -425,7 +433,7 @@ class KasirController extends Controller
             }
         }  
 
-        //dd(\Carbon\Carbon::today()); 
+        //dd($productStockIn); 
 
         $columnPenjualanProduct = new Chart('column');
         $columnPenjualanProduct->title('Penjualan berdasarkan barang '.\Carbon\Carbon::parse(\Request::input('tanggal'))->format('d M Y'))
@@ -449,9 +457,9 @@ class KasirController extends Controller
         }
 
         if($request->has('print')){
-            $this->printAll($request,$productSold,$orders);
+            $this->printAll($request,$productSold,$orders,$productStockIn);
         }
-        return view('kasir.penjualanharitertentu',compact(['orders','totaluang','columnPenjualanProduct','productSold']));
+        return view('kasir.penjualanharitertentu',compact(['orders','totaluang','columnPenjualanProduct','productSold','productStockIn']));
         
     }
 
@@ -569,7 +577,7 @@ class KasirController extends Controller
     public function productview(Product $product)
     {
         //$stocks = $product->stocks()->whereStockFrom('supplier')->orderBy('tanggal','desc')->orderBy('created_at','desc')->paginate(20);        
-        $stocks = $product->stocks()->whereStoreId(auth()->user()->store_id)->orderBy('tanggal','desc')->orderBy('created_at','desc')->limit(20)->get(); 
+        $stocks = $product->stocks()->whereStoreId(auth()->user()->store_id)->orderBy('tanggal','desc')->orderBy('created_at','desc')->get(); 
        
         return view('kasir.productview',compact('product','stocks'));
     }
@@ -664,9 +672,11 @@ class KasirController extends Controller
     }
 
 
-    public function printAll($request,$productSold,$orders)
+    public function printAll($request,$productSold,$orders,$productStockIn)
     {
+        //dd($productStockIn);
         $no = 1;
+        $noMasuk = 1;
 
         // dd($order->store->name);
         $connector = new WindowsPrintConnector("ZJ-58");        
@@ -682,12 +692,21 @@ class KasirController extends Controller
         $printer->setJustification(Printer::JUSTIFY_LEFT);
         $printer->text("Tanggal: ".\Carbon\Carbon::parse($request->tanggal)->format('d M Y')."\n");
 
-        $printer->text("===============================\n");
+        $printer->text("==========BARANG TERJUAL=============\n");
 
         foreach ($productSold as $product) {
                 $ps = $product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->input('tanggal')));
                  $printer->text($no." ".$product->name." ".$ps->sum('qty')."\n");
                 $no++;
+        }
+
+
+        $printer->text("\n==========BARANG MASUK=============\n");
+        $totalMasuk = 0;
+        foreach ($productStockIn as $psi) {
+                $totalMasuk = $totalMasuk + $psi['stock_in'];
+                 $printer->text($noMasuk." ".$psi['product']->name." ".$psi['stock_in']."\n");
+                $noMasuk++;
         }
         // foreach($orders as $order){
         //     foreach($order->items as $item){
@@ -697,7 +716,8 @@ class KasirController extends Controller
         // }
 
         $printer->text("===============================\n\n");
-        $printer->text("TOTAL QTY: ".$orders->sum('total_qty')." PCS \n");
+        $printer->text("TOTAL KELUAR: ".$orders->sum('total_qty')." PCS \n");
+        $printer->text("TOTAL MASUK: ".$totalMasuk." PCS \n\n\n\n\n");
         $printer->text("TOTAL HARGA: ".toRp($orders->sum('total_price'))."\n\n\n\n");
         $printer->cut();
         

@@ -77,7 +77,6 @@
             	@yield('content')
             </div>
 
-        </div>
         <div class="footer">
             <div class="pull-right">
                 <a href="http://rolloic.com">rolloic.com</a>
@@ -85,6 +84,7 @@
             <div>
                 Hak Cipta<strong> Basrul Yandri</strong> @2018
             </div>
+        </div>
         </div>
 
         </div>

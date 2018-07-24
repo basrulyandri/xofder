@@ -127,6 +127,23 @@
                     </div>
                 </div>
 
+                 <div class="ibox float-e-margins">    
+                    <div class="ibox-title">
+                        <h5>Barang Masuk</h5>                               
+                    </div>                
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            @foreach($productStockIn as $psi)
+                            <li class="list-group-item">
+                                <span class="badge badge-primary">{{$psi['stock_in']}}</span>
+                                {{$psi['product']->name}}
+                            </li>
+                            @endforeach
+                            
+                        </ul>
+                    </div>
+                </div>
+
             </div>
 
             

@@ -75,7 +75,7 @@
                             <tbody>
                             <?php $i = 1 ?>
 
-                            @foreach($product->ordersItem()->limit(20)->get() as $item)
+                            @foreach($product->ordersItem()->get() as $item)
                             <tr>
                                 <td>{{$i}}</td>
                                 <td>{{$item->created_at->format('d M Y')}}</td>
