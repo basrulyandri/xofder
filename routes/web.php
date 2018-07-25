@@ -475,3 +475,8 @@ Route::post('ajaxaddcustomertocart', [
 		'uses' => 'CartController@ajaxaddcustomertocart',
 		'as' => 'ajax.add.customer.to.cart',
 	]);
+
+Route::get('ajax/order/{order}/view', [
+			'uses' => 'OrderController@ajaxview',
+			'as' => 'ajax.order.view',
+		]);

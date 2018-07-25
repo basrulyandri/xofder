@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Product;
 use App\Supplier;
 use App\Stock;
-
+use Carbon\Carbon;
 class ProductController extends Controller
 {
     public function index()
@@ -41,11 +41,26 @@ class ProductController extends Controller
     	return redirect()->route('product.view',$request->product_id)->with('success','Stock berhasil ditambahkan');
     }
 
-    public function view(Product $product)
+    public function view(Product $product,Request $request)
     {
-        $suppliers = Supplier::pluck('name','id')->prepend('Pilih Supplier','')->toArray();
-    	$stocks = $product->stocks()->whereStockFrom('supplier')->orderBy('tanggal','desc')->orderBy('created_at','desc')->paginate(20);    	
-    	return view('products.view',compact('product','stocks','suppliers'));
+        if($request->has('start_date') && $request->has('end_date')){
+
+            $dateRangeArray = [Carbon::parse($request->start_date)->startOfDay(),Carbon::parse($request->end_date)->endOfDay()];
+        }else{
+            $dateRangeArray = [Carbon::now()->subDays(7)->startOfDay(),Carbon::now()->endOfDay()];
+        }
+        $queryStocks = $product->stocks()->whereStoreId(getSetting('main_store'))->whereBetween('tanggal',$dateRangeArray);
+        $totalStockOut = $queryStocks->sum('stock_out');
+        $totalStockIn = $queryStocks->sum('stock_in');
+        $stocks = $queryStocks->orderBy('tanggal','desc')->get();
+        //dd($stocks);
+        $queryProductSoldLog = $product->ordersItem()->whereBetween('created_at',$dateRangeArray);
+        $totalProductSold = $queryProductSoldLog->sum('qty');
+        $productSoldLog = $queryProductSoldLog->orderBy('created_at','desc')->get();
+
+
+        //dd($productSoldLog);
+    	return view('products.view',compact('product','stocks','suppliers','productSoldLog','totalStockOut','totalStockIn','totalProductSold'));
     }
 
     public function postadd(Request $request)

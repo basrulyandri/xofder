@@ -161,6 +161,7 @@
 			selector:'.qty',
 			success: function(response, newValue) {				
 		        $('#list-penjualan').html(response.viewlistpenjualan);
+		        $('#listBarang').select2('open');
 		    }
 		});
 
@@ -175,24 +176,32 @@
 		$('#listBarang').select2();
 		$('#listBarang').select2('open');
 
-		
 
 		$('#listBarang').on('select2:select', function (e) { 
 			var el = $(this);
 			var product_id = $(this).val();
+
 			var _token = '{{Session::token()}}';
 			$.ajax({
 			  type: "POST",
 			  url: "{{route('ajax.post.addtocart')}}",
 			  data: { product_id : product_id, _token:_token },
-			}).success(function(data){
-				console.log(data.cart);
-				//$('#list-data-barang').html(data.viewlistbarang);				
-				$('#list-penjualan').html(data.viewlistpenjualan);				
-			});
+			}).success(function(data){				
+				$('#list-penjualan').html(data.viewlistpenjualan);	
+				//$(".qty[data-pk='"+product_id+"']").editable('show');
 
-		    //$(this).select2('open');
+				$( "body" ).on( "click",".qty[data-pk='"+product_id+"']", function() {
+					$(this).on('shown', function(e, editable) {				           
+				             setTimeout(function() {
+				                 editable.input.$input.select();
+				                 //console.log('paused here');
+				             }, 500);				         
+				      });
+				});
+				$( ".qty[data-pk='"+product_id+"']" ).trigger( "click" );
+			});
 		});
+
 	});
 </script>
 @stop

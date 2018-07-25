@@ -38,7 +38,8 @@
                     <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Barang</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse" aria-expanded="false" style="height: 0px;">
                         <li><a href="{{route('products.index')}}">List Barang</a></li>
-                        <li><a href="{{route('product.add')}}">Tambah Barang</a></li>                        
+                        <li><a href="{{route('product.add')}}">Tambah Barang</a></li>    
+                                           
                     </ul>
                 </li>  
                 

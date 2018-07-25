@@ -419,7 +419,7 @@ class KasirController extends Controller
         $productStockIn= [];
         $productCategories = [\Carbon\Carbon::parse($request->tanggal)->format('d M Y')];
         foreach($products as $product){
-            $productHasStockInToday = $product->stocks()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->where('stock__from','=','supplier')->sum('stock_in');
+            $productHasStockInToday = $product->stocks()->whereDate('created_at','=',\Carbon\Carbon::parse($request->tanggal))->where('stock_from','=','supplier')->sum('stock_in');
             if($productHasStockInToday > 0) {
                 $productStockIn[] = ['product' => $product,'stock_in' => $productHasStockInToday];
             }
@@ -574,11 +574,11 @@ class KasirController extends Controller
         return view('kasir.products',compact(['products']));
     }
 
-    public function productview(Product $product)
+    public function productview(Product $product,Request $request)
     {
         //$stocks = $product->stocks()->whereStockFrom('supplier')->orderBy('tanggal','desc')->orderBy('created_at','desc')->paginate(20);        
-        $stocks = $product->stocks()->whereStoreId(auth()->user()->store_id)->orderBy('tanggal','desc')->orderBy('created_at','desc')->get(); 
-       
+        
+        $stocks = $product->stocks()->whereStoreId(auth()->user()->store_id)->orderBy('tanggal','desc')->orderBy('created_at','desc')->get();
         return view('kasir.productview',compact('product','stocks'));
     }
 

@@ -25,7 +25,9 @@ class PembayaranController extends Controller
         $printer->setTextSize(2,1);
         $printer->text(getSetting('company_name')."\n");
         $printer->setTextSize(1,1);
-        $printer->text($order->store->name."\n\n");
+        $printer->text($order->store->name."\n");
+        $printer->text($order->store->address."\n");
+        $printer->text($order->store->phone."\n\n");
 
         $printer->setJustification(Printer::JUSTIFY_LEFT);
         $printer->text("Tanggal Bayar: ".$pembayaran->created_at->format('d M Y')."\n");

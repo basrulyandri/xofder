@@ -7,18 +7,24 @@ use App\Order;
 use App\Store;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
 	public function index(Request $request)
 	{
-		if($request->store_id == ''){
-			$orders = Order::orderBy('created_at','desc')->paginate(20);			
+
+		if($request->has('start_date') && $request->has('start_date')){
+			$dateRangeArray = [Carbon::parse($request->start_date)->startOfDay(),Carbon::parse($request->end_date)->endOfDay()];
+			$queryOrders = Order::whereBetween('created_at',$dateRangeArray);
+			$totalQty = $queryOrders->sum('total_qty');
+			$totalPrice = $queryOrders->sum('total_price');
+			$orders = $queryOrders->orderBy('created_at','desc')->get();
 		} else {
-			$store = Store::find($request->store_id);
-			$orders = $store->orders()->orderBy('created_at','desc')->paginate(20);
+			$orders = Order::orderBy('created_at','desc')->paginate(20);
 		}
-		return view('orders.index',compact('orders'));
+		//dd($orders);
+		return view('orders.index',compact('orders','totalQty','totalPrice'));
 	}
 
 	public function view(Order $order)
@@ -40,7 +46,9 @@ class OrderController extends Controller
         $printer->setTextSize(2,1);
         $printer->text(getSetting('company_name')."\n");
         $printer->setTextSize(1,1);
-        $printer->text($order->store->name."\n\n");
+        $printer->text($order->store->name."\n");
+        $printer->text($order->store->address."\n");
+        $printer->text($order->store->phone."\n\n");
 
         $printer->setJustification(Printer::JUSTIFY_LEFT);
         $printer->text("Tanggal: ".$order->created_at->format('d M Y')."\n");
@@ -84,6 +92,12 @@ class OrderController extends Controller
 	public function edittanggal()
 	{
 		return view('orders.edittanggal');
+	}
+
+	public function ajaxview($order)
+	{
+		$order = \App\Order::find($order);
+		return view('orders.ajaxview',compact('order'));
 	}
 
 	public function updatetanggal(Request $request)

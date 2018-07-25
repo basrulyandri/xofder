@@ -4,6 +4,12 @@
 @stop
 @section('content')
 <div class="row">
+    <div class="col-lg-12">
+        <a href="{{route('kasir.quick')}}" class="btn btn-outline btn-primary dim" data-toggle="tooltip" data-placement="bottom" title="Penjualan Cepat" type="button"><i class="fa fa-shopping-cart"></i></a>
+        <a href="{{route('kasir.to.customer')}}" class="btn btn-outline btn-primary dim" data-toggle="tooltip" data-placement="bottom" title="Penjualan Ke Langganan" type="button"><i class="fa fa-edit"></i></a>
+    </div>
+</div>
+<div class="row">
             <div class="col-lg-12">
                 <div class="wrapper wrapper-content animated fadeInRight">
                     <div class="ibox-content p-xl">
@@ -11,9 +17,9 @@
                                 <div class="col-sm-6">                                    
                                     <address>
                                         <strong>RedFox Store</strong><br>
-                                        Pasar Tanah ABang<br>
-                                        Blok F<br>
-                                        <abbr title="Phone"></abbr> 021- 3728181
+                                        {{$order->store->name}}<br>
+                                        {{$order->store->address}}<br>
+                                        <abbr title="Phone"></abbr> {{$order->store->phone}}
                                     </address>
                                 </div>
 
@@ -129,4 +135,12 @@
                 </div>
             </div>
         </div>
+@stop
+
+@section('footer')
+    <script>
+        $(document).ready(function(){
+            $('.dim').tooltip();
+        });
+    </script>
 @stop

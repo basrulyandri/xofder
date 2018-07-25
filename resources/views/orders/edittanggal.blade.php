@@ -18,6 +18,11 @@
         
     </div>   
     <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="alert alert-danger alert-dismissable">                            
+          <h3><i class="fa fa-exclamation"></i> Hati-hati.</h3> 
+          <p>Halaman ini untuk memindahkan nota transaksi penjualan  ke tanggal tertentu.</p>
+      </div>
+
         <div class="ibox-content p-xl">
             <div class="row">
                 <div class="col-lg-12">
@@ -26,19 +31,17 @@
                             {!!Form::label('orders','No. Order',['class' => 'col-sm-2 control-label'])!!}
                             <div class="col-sm-10">
                               {!!Form::text('orders',old('orders'),['class' => 'form-control','id' => 'ordersId'])!!}
-                              @if($errors->has('orders'))
-                                <span class="help-block">{{$errors->first('orders')}}</span>
-                              @endif
+                              
+                                <span class="help-block"> No.order bisa lebih dari 1. Ketikan no.order lalu enter untuk memasukkan kembali no. order lainnya</span>
+                              
                             </div>
                           </div>
 
                           <div class='form-group{{$errors->has('tanggal') ? ' has-error' : ''}}'>
                               {!!Form::label('tanggal','Tanggal',['class' => 'col-sm-2 control-label'])!!}
                               <div class="col-sm-10">
-                                {!!Form::text('tanggal',\Carbon\carbon::now()->format('Y-m-d'),['class' => 'form-control','placeholder' => 'Tanggal','required' => 'true','id' => 'tanggal'])!!}
-                                @if($errors->has('tanggal'))
-                                  <span class="help-block">{{$errors->first('tanggal')}}</span>
-                                @endif
+                                {!!Form::text('tanggal',\Carbon\carbon::now()->format('Y-m-d'),['class' => 'form-control','placeholder' => 'Tanggal','required' => 'true','id' => 'tanggal'])!!}                                
+                                  <span class="help-block">Deret No.order yang ada di atas akan dipindahkan otomatis ke tanggal yang dipilih.</span>                                
                               </div>
                             </div>
 
