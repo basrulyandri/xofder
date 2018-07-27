@@ -103,29 +103,16 @@
 						<h3 class="mtn mb10 fw400">BARANG</h3>
 					</div>
 				</div>
-				<div class="panel-body mtn" id="list-data-barang">
-					<div class="bs-component mb20">									
-						@if(session()->has('cart'))
-						@foreach($products as $product)
-						@if(!array_key_exists($product->id,session('cart')->items))
-						@if($product->isStocksAvailable())
-						<button product_id="{{$product->id}}" type="button" class="btn btn-primary btn-block btn-add-data-barang" style="font-size: 11px;">{{$product->name}} ({{$product->availableStocks()}})</button>
-						@else
-						<button product_id="{{$product->id}}" type="button" class="btn btn-dark btn-block disabled" style="font-size: 11px;">{{$product->name}} ({{$product->availableStocks()}})</button>
-						@endif
-						@endif
-						@endforeach
-						@else
-						@foreach($products as $product)			
-						@if($product->isStocksAvailable())								
-						<button product_id="{{$product->id}}" type="button" class="btn btn-primary btn-block btn-add-data-barang" style="font-size: 11px;">{{$product->name}} ({{$product->availableStocks()}})</button>
-						@else
-						<button product_id="{{$product->id}}" type="button" class="btn btn-dark btn-block disabled" style="font-size: 11px;">{{$product->name}} ({{$product->availableStocks()}})</button>
-						@endif
-						@endforeach
-						@endif
-					</div>								
-				</div>
+				<div class='form-group{{$errors->has('supplier_id') ? ' has-error' : ''}}' style="    padding: 0 10px;">
+                <select name="stock_from_id" id="listBarang" class="form-control" style="width:100%;">
+                    @foreach($availableProducts as $key => $product)
+                    	<option value="{{ $key }}">{{ $product }}</option>
+                    @endforeach
+                </select>
+                @if($errors->has('supplier_id'))
+                  <span class="help-block">{{$errors->first('supplier_id')}}</span>
+                @endif				              	
+              </div>
 			</div>
 		</div>
 		<div class="clearfix"> </div>
@@ -136,6 +123,7 @@
 
 @section('footer')
 <script src="{{asset('cashier')}}/bootstrap3-editable/js/bootstrap-editable.js"></script>
+<script src="{{asset('cashier/js')}}//select2.min.js"></script>
 <script>
 	$(document).ready(function(){
 		$.fn.editable.defaults.mode = 'popup';
@@ -143,21 +131,7 @@
                 params._token = '{{Session::token()}}';
                 return params;
             };
-		$('body').on('click','button.btn-add-data-barang', function(){
-			var el = $(this);
-			var product_id = $(this).attr('product_id');
-			var _token = '{{Session::token()}}';
-			$.ajax({
-			  type: "POST",
-			  url: "{{route('ajax.post.addtocart')}}",
-			  data: { product_id : product_id, _token:_token },
-			}).success(function(data){
-				console.log(data.cart);
-				$('#list-data-barang').html(data.viewlistbarang);				
-				$('#list-penjualan').html(data.viewlistpenjualan);				
-			});			
-		});
-
+		
 		$('body').on('click','button.btn-hapus', function(){			
 			var product_id = $(this).attr('product_id');
 			var _token = '{{Session::token()}}';
@@ -174,10 +148,41 @@
 
 		$('#list-penjualan').editable({
 			selector:'.qty',
+			savenochange:true,
 			success: function(response, newValue) {				
 		        $('#list-penjualan').html(response.viewlistpenjualan);
+		        $('#listBarang').select2('open');
 		    }
 		});
+
+		$('#listBarang').select2();
+		$('#listBarang').select2('open');
+
+		$('#listBarang').on('select2:select', function (e) { 
+			var el = $(this);
+			var product_id = $(this).val();
+
+			var _token = '{{Session::token()}}';
+			$.ajax({
+			  type: "POST",
+			  url: "{{route('ajax.post.addtocart')}}",
+			  data: { product_id : product_id, _token:_token },
+			}).success(function(data){				
+				$('#list-penjualan').html(data.viewlistpenjualan);	
+				//$(".qty[data-pk='"+product_id+"']").editable('show');
+
+				$( "body" ).on( "click",".qty[data-pk='"+product_id+"']", function() {
+					$(this).on('shown', function(e, editable) {				           
+				             setTimeout(function() {
+				                 editable.input.$input.select();
+				                 //console.log('paused here');
+				             }, 500);				         
+				      });
+				});
+				$( ".qty[data-pk='"+product_id+"']" ).trigger( "click" );
+			});
+		});
+
 		@if($order->customer_id == 1)
 		$('#list-penjualan').editable({
 			selector:'.harga',

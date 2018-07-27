@@ -133,20 +133,6 @@
                 params._token = '{{Session::token()}}';
                 return params;
             };
-		$('body').on('click','button.btn-add-data-barang', function(){
-			var el = $(this);
-			var product_id = $(this).attr('product_id');
-			var _token = '{{Session::token()}}';
-			$.ajax({
-			  type: "POST",
-			  url: "{{route('ajax.post.addtocart')}}",
-			  data: { product_id : product_id, _token:_token },
-			}).success(function(data){
-				console.log(data.cart);
-				$('#list-data-barang').html(data.viewlistbarang);				
-				$('#list-penjualan').html(data.viewlistpenjualan);				
-			});			
-		});
 
 		$('body').on('click','button.btn-hapus', function(){
 			var product_id = $(this).attr('product_id');
@@ -164,15 +150,21 @@
 
 		$('#list-penjualan').editable({
 			selector:'.qty',
+			savenochange:true,
 			success: function(response, newValue) {
 				console.log(response);
 		        $('#list-penjualan').html(response.viewlistpenjualan);
+		        $('#listBarang').select2('open');
 		    }
 		});
 
 		$('#stores').select2();		
+		$('#stores').select2('open');		
 		$('#listBarang').select2();
-		$('#listBarang').select2('open');
+
+		$('#stores').on('select2:select', function (e) {
+			$('#listBarang').select2('open');
+		});
 
     	$('#listBarang').on('select2:select', function (e) { 
 			var el = $(this);
@@ -182,12 +174,18 @@
 			  type: "POST",
 			  url: "{{route('ajax.post.addtocart')}}",
 			  data: { product_id : product_id, _token:_token },
-			}).success(function(data){
-				console.log(data.cart);
-				//$('#list-data-barang').html(data.viewlistbarang);				
-				$('#list-penjualan').html(data.viewlistpenjualan);				
+			}).success(function(data){							
+				$('#list-penjualan').html(data.viewlistpenjualan);		
+				$( "body" ).on( "click",".qty[data-pk='"+product_id+"']", function() {
+					$(this).on('shown', function(e, editable) {				           
+				             setTimeout(function() {
+				                 editable.input.$input.select();
+				                 //console.log('paused here');
+				             }, 500);				         
+				      });
+				});
+				$( ".qty[data-pk='"+product_id+"']" ).trigger( "click" );		
 			});
-		    $(this).select2('open');
 		});
 	});
 </script>

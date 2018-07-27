@@ -506,8 +506,8 @@ class KasirController extends Controller
             session('cart')->items[$item->product_id]['stocks'] = $item->product->storeAvailableStocks();
         }
         //dd(session('cart'));      
-        $products = Product::all();
-        return view('kasir.editpenjualan',compact(['order','products']));
+        $availableProducts = \App\Product::where('available_stocks','>',0)->pluck('name','id')->prepend('Pilih Barang','')->toArray();
+        return view('kasir.editpenjualan',compact(['order','availableProducts']));
     }
 
     public function updatepenjualan(Request $request)

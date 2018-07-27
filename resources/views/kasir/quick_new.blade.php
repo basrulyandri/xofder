@@ -128,20 +128,6 @@
                 params._token = '{{Session::token()}}';
                 return params;
             };
-		$('body').on('click','button.btn-add-data-barang', function(){
-			var el = $(this);
-			var product_id = $(this).attr('product_id');
-			var _token = '{{Session::token()}}';
-			$.ajax({
-			  type: "POST",
-			  url: "{{route('ajax.post.addtocart')}}",
-			  data: { product_id : product_id, _token:_token },
-			}).success(function(data){
-				console.log(data.cart);
-				$('#list-data-barang').html(data.viewlistbarang);				
-				$('#list-penjualan').html(data.viewlistpenjualan);				
-			});			
-		});
 
 		$('body').on('click','button.btn-hapus', function(){			
 			var product_id = $(this).attr('product_id');
@@ -159,6 +145,7 @@
 
 		$('#list-penjualan').editable({
 			selector:'.qty',
+			savenochange:true,
 			success: function(response, newValue) {				
 		        $('#list-penjualan').html(response.viewlistpenjualan);
 		        $('#listBarang').select2('open');

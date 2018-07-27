@@ -34,10 +34,10 @@
            
             <form class="m-t" role="form" action="{!!route('auth.dologin')!!}" method="post">
                 <div class="form-group">
-                    <input type="email" class="form-control" name="email" placeholder="Username" required="">
+                    <input type="email" class="form-control" name="email" placeholder="Username" required="" autofocus>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" name="password" placeholder="Password" required="">
+                    <input type="password" class="form-control" name="password" placeholder="Password" required=""  autofocus>
                 </div>
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
                 <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
