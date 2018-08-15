@@ -681,7 +681,7 @@ class KasirController extends Controller
         $no = 1;
         $noMasuk = 1;
 
-        dd($order->store->name);
+        //dd($order->store->name);
         $connector = new WindowsPrintConnector("ZJ-58");        
         $printer = new Printer($connector);
         $printer -> initialize();
