@@ -38,6 +38,7 @@ class ProductController extends Controller
     	$request->request->add(['stock_from'=>'supplier']);    	
         //dd($request->all());
     	Stock::create($request->all());
+        updateProductsAvailableStocks(Product::find($request->product_id));
     	return redirect()->route('product.view',$request->product_id)->with('success','Stock berhasil ditambahkan');
     }
 

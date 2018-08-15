@@ -9,11 +9,7 @@
                             <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{\Auth::user()->getNameOrEmail(true)}}</strong>
                              </span> <span class="text-muted text-xs block">{{\Auth::user()->role->name}} <b class="caret"></b></span> </span> </a>
                         <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                            <li><a href="profile.html">Profile</a></li>
-                            <li><a href="contacts.html">Contacts</a></li>
-                            <li><a href="mailbox.html">Mailbox</a></li>
-                            <li class="divider"></li>
-                            <li><a href="login.html">Logout</a></li>
+                           
                         </ul>
                     </div>
                     <div class="logo-element">
@@ -54,7 +50,16 @@
                 
                 <li>
                     <a href="{{route('report.index')}}"><i class="fa fa-pie-chart"></i> <span class="nav-label">Laporan</span></a>
+                </li>  
+                <li style="background-color: red;">
+                    @if(getSetting('kasir_is_blocked') == '1')
+                        <a href="{{route('toggle.block.app','open')}}"><i class="fa fa-exclamation"></i> <span class="nav-label">Buka Aplikasi</span></a>
+                    @else
+                        <a href="{{route('toggle.block.app','close')}}"><i class="fa fa-exclamation"></i> <span class="nav-label">Tutup Aplikasi</span></a>
+                    @endif
                 </li>            
+
+
             </ul>
 
         </div>

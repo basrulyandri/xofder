@@ -561,6 +561,9 @@ class KasirController extends Controller
 
     public function deleteorder(Order $order)
     {
+        if(!$order->created_at->isToday()){
+            return redirect()->back()->with('error','Penjualan tidak bisa dihapus lagi.'); 
+        }
         $order->items()->delete();
         $order->pembayaran()->delete();
         $order->delete();
@@ -569,7 +572,7 @@ class KasirController extends Controller
 
     public function stocks()
     {
-        updateProductsAvailableStocks();
+        //updateProductsAvailableStocks();
         $products = Product::get();
         return view('kasir.products',compact(['products']));
     }
@@ -679,51 +682,59 @@ class KasirController extends Controller
         $noMasuk = 1;
 
         // dd($order->store->name);
-        $connector = new WindowsPrintConnector("ZJ-58");        
-        $printer = new Printer($connector);
-        $printer -> initialize();
+        // $connector = new WindowsPrintConnector("ZJ-58");        
+        // $printer = new Printer($connector);
+        // $printer -> initialize();
 
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-        $printer->setTextSize(2,1);
-        $printer->text(getSetting('company_name')."\n");
-        $printer->setTextSize(1,1);
-        $printer->text(\App\Store::find(getSetting('main_store'))->name."\n\n");
+        // $printer->setJustification(Printer::JUSTIFY_CENTER);
+        // $printer->setTextSize(2,1);
+        // $printer->text(getSetting('company_name')."\n");
+        // $printer->setTextSize(1,1);
+        // $printer->text(\App\Store::find(getSetting('main_store'))->name."\n\n");
 
-        $printer->setJustification(Printer::JUSTIFY_LEFT);
-        $printer->text("Tanggal: ".\Carbon\Carbon::parse($request->tanggal)->format('d M Y')."\n");
+        // $printer->setJustification(Printer::JUSTIFY_LEFT);
+        // $printer->text("Tanggal: ".\Carbon\Carbon::parse($request->tanggal)->format('d M Y')."\n");
 
-        $printer->text("==========BARANG TERJUAL=============\n");
+        // $printer->text("==========BARANG TERJUAL=============\n");
 
-        foreach ($productSold as $product) {
-                $ps = $product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->input('tanggal')));
-                 $printer->text($no." ".$product->name." ".$ps->sum('qty')."\n");
-                $no++;
-        }
-
-
-        $printer->text("\n==========BARANG MASUK=============\n");
-        $totalMasuk = 0;
-        foreach ($productStockIn as $psi) {
-                $totalMasuk = $totalMasuk + $psi['stock_in'];
-                 $printer->text($noMasuk." ".$psi['product']->name." ".$psi['stock_in']."\n");
-                $noMasuk++;
-        }
-        // foreach($orders as $order){
-        //     foreach($order->items as $item){
-        //         $printer->text($no." ".$item->product->name."(".$item->qty.") ".toRp($item->price * $item->qty)."\n");
+        // foreach ($productSold as $product) {
+        //         $ps = $product->ordersItem()->whereDate('created_at','=',\Carbon\Carbon::parse($request->input('tanggal')));
+        //          $printer->text($no." ".$product->name." ".$ps->sum('qty')."\n");
         //         $no++;
-        //     }
         // }
 
-        $printer->text("===============================\n\n");
-        $printer->text("TOTAL KELUAR: ".$orders->sum('total_qty')." PCS \n");
-        $printer->text("TOTAL MASUK: ".$totalMasuk." PCS \n\n\n\n\n");
-        $printer->text("TOTAL HARGA: ".toRp($orders->sum('total_price'))."\n\n\n\n");
-        $printer->cut();
+
+        // $printer->text("\n==========BARANG MASUK=============\n");
+        // $totalMasuk = 0;
+        // foreach ($productStockIn as $psi) {
+        //         $totalMasuk = $totalMasuk + $psi['stock_in'];
+        //          $printer->text($noMasuk." ".$psi['product']->name." ".$psi['stock_in']."\n");
+        //         $noMasuk++;
+        // }
+        // // foreach($orders as $order){
+        // //     foreach($order->items as $item){
+        // //         $printer->text($no." ".$item->product->name."(".$item->qty.") ".toRp($item->price * $item->qty)."\n");
+        // //         $no++;
+        // //     }
+        // // }
+
+        // $printer->text("===============================\n\n");
+        // $printer->text("TOTAL KELUAR: ".$orders->sum('total_qty')." PCS \n");
+        // $printer->text("TOTAL MASUK: ".$totalMasuk." PCS \n\n\n\n\n");
+        // $printer->text("TOTAL HARGA: ".toRp($orders->sum('total_price'))."\n\n\n\n");
+        // $printer->cut();
         
-        /* Close printer */
-        $printer -> close();
+        // /* Close printer */
+        // $printer -> close();
+        $block = \App\Setting::whereSettingKey('kasir_is_blocked')->first();
+        $block->setting_value = '1';
+        $block->save();
         return redirect()->back();
+    }
+
+    public function blocked()
+    {
+        return view('kasir.blocked');
     }
 
 }

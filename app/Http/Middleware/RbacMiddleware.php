@@ -20,7 +20,7 @@ class RbacMiddleware
             return redirect()->route('auth.login');
         }
 
-        if(Auth::user()->role->name == 'Superadmin'){
+        if(in_array(Auth::user()->role->name,['Superadmin','Administrator'])){
             return $next($request);    
         }
         //retrieve semua permission yang dimiliki user sesuai dengan rolenya

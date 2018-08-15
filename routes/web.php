@@ -67,6 +67,11 @@ Route::get('search', [
 	]);
 
 Route::group(['middleware' => 'rbac'],function(){
+
+	Route::get('toggle/app/{toggle}', [
+			'uses' => 'DashboardController@toggleBlockApp',
+			'as' => 'toggle.block.app',
+		]);
 	Route::get('roles',[
 		'uses' => 'RoleController@index',
 		'as' => 'roles.index',
@@ -251,7 +256,7 @@ Route::group(['middleware' => 'rbac'],function(){
 
 
 
-	Route::group(['prefix' => config('rollo-inventor.KASIR_PREFIX_URL')], function () {
+	Route::group(['prefix' => config('rollo-inventor.KASIR_PREFIX_URL'),'middleware' => 'blockapp'], function () {
 	    Route::get('/', [
 	    		'uses' => 'KasirController@index',
 	    		'as' => 'kasir.index',
@@ -388,6 +393,11 @@ Route::group(['middleware' => 'rbac'],function(){
 	    	]);
 	});
 });
+
+Route::get('closed', [
+		'uses' => 'KasirController@blocked',
+		'as' => 'kasir.blocked',
+	]);
 
 Route::get('login',[
 	'uses' => 'AuthController@login',

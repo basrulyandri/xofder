@@ -53,7 +53,9 @@
                                         <a href="{{route('penjualan.edit',$order)}}"" class="btn btn-sm btn-warning">Edit</a>
                                     @endif    
                                     <a href="{{route('order.print',$order)}}" class="btn btn-sm btn-primary"><i class="fa fa-print"></i> Print</a>                                
+                                    @if($order->created_at->isToday())
                                         <button id="{{$order->id}}" class="btn btn-sm btn-danger">Hapus</a>
+                                    @endif
 	                                </td>
 	                            </tr>
                             @endforeach                            

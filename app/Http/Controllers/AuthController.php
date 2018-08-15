@@ -20,10 +20,12 @@ class AuthController extends Controller
         ]);  
     	if(Auth::attempt(['email' => $request->input('email'),'password' => $request->input('password')])){
             updateProductsAvailableStocks();
+            checkBlockApp();
             
             if(auth()->user()->isKasir()){
                 return redirect()->route('kasir.index');
             }
+
             return redirect()->intended('/dashboard');
         }                      
         return redirect()->route('auth.login')->withInput();

@@ -20,7 +20,7 @@ function totalProductsHasMinimunStock()
 {
 	$amount = 0;
 	foreach(\App\Product::all() as $product){
-		if($product->storeAvailableStocks() < 100 ){
+		if($product->available_stocks < 100 ){
 			$amount++;
 		}
 	}
@@ -74,5 +74,14 @@ function updateProductsAvailableStocks($products = null)
 		$products->available_stocks = $products->storeAvailableStocks();
 		$products->save();
 	}
+}
+
+function checkBlockApp()
+{
+	$block = \App\Setting::whereSettingKey('kasir_is_blocked')->first();
+	if(!$block->updated_at->isToday()){
+        $block->setting_value = '0';
+        $block->save();
+    }
 }
 
