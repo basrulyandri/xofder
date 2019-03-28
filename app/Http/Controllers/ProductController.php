@@ -47,7 +47,7 @@ class ProductController extends Controller
         if($request->has('start_date') && $request->has('end_date')){
 
             $dateRangeArray = [Carbon::parse($request->start_date)->startOfDay(),Carbon::parse($request->end_date)->endOfDay()];
-        }else{
+        }else{            
             $dateRangeArray = [Carbon::now()->subDays(7)->startOfDay(),Carbon::now()->endOfDay()];
         }
         $queryStocks = $product->stocks()->whereStoreId(getSetting('main_store'))->whereBetween('tanggal',$dateRangeArray);

@@ -12,20 +12,9 @@
 @section('content')  
     <div class="row wrapper border-bottom white-bg page-heading">	
         <div class="col-sm-4">
-            <h2>Penjualan</h2>
-            <ol class="breadcrumb">
-                <li class="active">
-                    <a href="{{route('orders.index')}}">Penjualan</a>
-                </li>                
-            </ol>
-        </div>
-        <div class="col-sm-8">
-            <div class="title-action">                  
-                    <a class="btn btn-warning" href="{{route('orders.edit.tanggal')}}">Edit Penjualan</a>
-                    <a class="btn btn-success" data-toggle="modal" href='#modalPilihTanggal'><i class="fa fa-calendar"></i> Tanggal</a>
-                     <a href="{{route('orders.index')}}" class="btn btn-info"><i class="fa fa-refresh"></i> Reset</a>
-            </div>
-        </div> 
+            <h2>Detail customer {{$customer->name}}</h2>
+            
+        </div>         
     </div>   
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
@@ -41,8 +30,7 @@
                                 <th>QTY</th>                                                                
                                 <th>HARGA</th>                                                              
                                 <th>PEMBAYARAN</th> 
-                                <th>STATUS</th> 
-                                <th>CUSTOMER</th>                               
+                                <th>STATUS</th>                              
                                 <th>KASIR</th>
                                 <th>ACTION</th>
                             </tr>
@@ -56,7 +44,7 @@
                                 <td>{{toRp($order->total_price)}}</td>
                                 <td>{{$order->payment_method}}</td>
                                 <td><span class="label @if($order->status == 'lunas') label-primary @else label-danger @endif">{{strtoupper($order->status)}}</span></td> 
-                                <td><a href="{{route('customer.view',$order->customer)}}">{{$order->customer->name}}</a></td>
+                               
                                 <td>{{$order->kasir->username}} <small>({{$order->kasir->store->name}})</small> </td>                                
                                 <td class="text-navy">                                    
                                     <button type="button" class="btn btn-xs btn-info openModalDetailOrder" orderId="{{$order->id}}" data-url="{{route('ajax.order.view',$order)}}">
@@ -65,7 +53,7 @@
                                 </td>
                             </tr>
                             @endforeach
-                            @if(\Request::has('start_date') && \Request::has('end_date'))
+                            
                             <tr>
                                 <td></td>
                                 <td></td>
@@ -76,63 +64,17 @@
                                 <td></td>
                                 <td></td>
                             </tr>
-                            @endif
+                            
                             </tbody>
-                        </table>
-                        @if(!\Request::has('start_date') && !\Request::has('end_date'))
-                        {{$orders->links()}}
-                        @endif
+                        </table>  
+                        @if($customer->id == 1)
+                              {{$orders->links()}}
+                            @endif                     
                     </div>
                 </div>
             </div>
         </div>
 	</div>
-
-<!-- Modal pilih tanggal -->
-<div class="modal fade" id="modalPilihTanggal" tabindex="-1" role="dialog" aria-labelledby="modalPilihTanggalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalPilihTanggalLabel">Pilih rentang waktu</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-         <div class="row">            
-            <div class="col-lg-12">
-            {!!Form::open(['method'=>'GET', 'class' => 'form-horizontal'])!!}
-
-                <div class='form-group{{$errors->has('start_date') ? ' has-error' : ''}}'>
-                  {!!Form::label('start_date','Tanggal Mulai',['class' => 'col-sm-2 control-label'])!!}
-                  <div class="col-sm-10">
-                    {!!Form::text('start_date',old('start_date'),['class' => 'form-control tanggal','placeholder' => 'Tanggal','required' => 'true'])!!}
-                    @if($errors->has('start_date'))
-                      <span class="help-block">{{$errors->first('start_date')}}</span>
-                    @endif
-                  </div>
-                </div>
-
-                <div class='form-group{{$errors->has('end_date') ? ' has-error' : ''}}'>
-                  {!!Form::label('end_date','Tanggal Akhir',['class' => 'col-sm-2 control-label'])!!}
-                  <div class="col-sm-10">
-                    {!!Form::text('end_date',old('end_date'),['class' => 'form-control tanggal','placeholder' => 'Tanggal','required' => 'true'])!!}
-                    @if($errors->has('end_date'))
-                      <span class="help-block">{{$errors->first('end_date')}}</span>
-                    @endif
-                  </div>
-                </div>           
-            </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <input type="submit" class="btn btn-success" value="OK">
-        {{Form::close()}}
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End Modal pilih tanggal -->
 
     <!-- Modal -->
 <div class="modal fade" id="modalDetailOrder" tabindex="-1" role="dialog" aria-labelledby="modalDetailOrderLabel" aria-hidden="true">

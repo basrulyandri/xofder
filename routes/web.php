@@ -11,14 +11,8 @@
 |
 */
 
-Route::get('checkorder',function(){
-	$order = \App\Order::find(7);
-	if($order->products() instanceof Illuminate\Database\Eloquent\Collection){
-		echo 'true';
-	}else {
-		echo 'false';
-	}
-	//dd($order->products());
+Route::get('cekm',function(){
+	
 });
 
 Route::post('addtocart', [
@@ -391,6 +385,10 @@ Route::group(['middleware' => 'rbac'],function(){
 	    		'uses' => 'ReportController@index',
 	    		'as' => 'kasir.report'
 	    	]);
+	     Route::get('customer/{customer}/view', [
+	     		'uses' => 'CustomerController@view',
+	     		'as' => 'customer.view',
+	     	]);
 	});
 });
 
