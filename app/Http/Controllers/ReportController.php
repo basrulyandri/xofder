@@ -101,4 +101,76 @@ class ReportController extends Controller
     	   return view('reports.index',compact(['penjualanChart','piePenjualanProduct']));
         }
     }
+
+
+    public function daterange(Request $request)
+    {
+        if(!$request->has('rentang')){
+            return view('reports.daterange');
+        }
+        //dd($request->rentang);
+        $tanggal = explode(' - ', $request->rentang) ;
+        $start_date = \Carbon\Carbon::parse($tanggal[0]);
+        $end_date = \Carbon\Carbon::parse($tanggal[1]);
+
+
+
+        $orders = Order::whereStoreId(getSetting('main_store'))->whereIn('status',['lunas','hutang'])->whereBetween('created_at',[$start_date,$end_date])->orderBy('created_at','desc')->get();
+
+        $products = Product::all();
+        $columnPenjualanProductSeries = [];
+        $productSold = [];
+        $productStockIn= [];        
+        foreach($products as $product){
+            $productHasStockInToday = $product->stocks()->whereBetween('created_at',[$start_date,$end_date])->where('stock_from','=','supplier')->sum('stock_in');
+            if($productHasStockInToday > 0) {
+                $productStockIn[] = ['product' => $product,'stock_in' => $productHasStockInToday];
+            }
+
+            if($product->ordersItem()->whereBetween('created_at',[$start_date,$end_date])->sum('qty') > 0){   
+                $productSold[] = $product;              
+                $columnPenjualanProductSeries[] = [
+                    'name' => $product->name,
+                    'data' => [intval($product->ordersItem()->whereBetween('created_at',[$start_date,$end_date])->sum('qty'))]
+                ];                          
+            }
+        }  
+
+        //dd($productStockIn); 
+
+        $columnPenjualanProduct = new Chart('column');
+        $columnPenjualanProduct->title('Penjualan berdasarkan barang '.$request->rentang)
+                                ->xAxis('',[$request->rentang])
+                                ->plotOptions([
+                                    'enabled' =>  true,
+                                    'borderRadius'=> 2,
+                                    'y'=> -10,
+                                    'shape' => 'callout',
+                                    ])
+                                ->series($columnPenjualanProductSeries);
+
+
+        //dd($orders);
+        $totaluang = 0;
+        $totalmodal = 0;
+        foreach($orders as $order){
+            //dd($order->pembayaran);
+            foreach($order->pembayaran()->whereBetween('created_at',[$start_date,$end_date])->get() as $pembayaran){
+                $totaluang = $totaluang + $pembayaran->nominal;                
+            }
+
+            foreach($order->items as $item){
+                $totalmodal = $totalmodal + ($item->buy_price * $item->qty );
+            }
+            
+            
+        }
+        // dd($orders->sum('total_qty'));
+        $totalprofit = $orders->sum('total_price') - $totalmodal;
+
+        if($request->has('print')){
+            $this->printAll($request,$productSold,$orders,$productStockIn);
+        }
+        return view('reports.daterange',compact(['orders','totaluang','columnPenjualanProduct','productSold','productStockIn','start_date','end_date','totalprofit']));
+    }
 }

@@ -71,7 +71,8 @@ class ProductController extends Controller
     			'code' => 'required|unique:products,code',
     			'name' => 'required',
     			'category_id' => 'required|numeric',
-    			'sell_price' => 'required|numeric'
+    			'sell_price' => 'required|numeric',
+                'buy_price' => 'required|numeric'
     		]);
 
         // $product = new Product;
@@ -99,7 +100,8 @@ class ProductController extends Controller
         $this->validate($request,[                
                 'name' => 'required',
                 'category_id' => 'required|numeric',
-                'sell_price' => 'required|numeric'
+                'sell_price' => 'required|numeric',
+                'buy_price' => 'required|numeric'
             ]);
         $product->update($request->all());
         return redirect()->route('products.index')->with('success','Data barang berhasil diubah');

@@ -48,7 +48,7 @@
                     Created by <strong><a target="_blank" href="http://rolloic.com">Rollo ITC</a></strong>
                 </div>
                 <div>
-                    <strong>Copyright</strong> Koperasi Syariah Masalahat Untuk Negeri @2017
+                    <strong>Copyright</strong> Rolloic.com @2018
                 </div>
             </div>
 

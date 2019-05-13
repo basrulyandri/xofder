@@ -63,6 +63,16 @@
                         @endif
                       </div>
                     </div>
+                    
+                    <div class='form-group{{$errors->has('buy_price') ? ' has-error' : ''}}'>
+                      {!!Form::label('buy_price','Harga Modal',['class' => 'col-sm-2 control-label'])!!}
+                      <div class="col-sm-10">
+                        {!!Form::text('buy_price',$product->buy_price,['class' => 'form-control uang','placeholder' => 'Harga Jual','required' => 'true'])!!}
+                        @if($errors->has('buy_price'))
+                          <span class="help-block">{{$errors->first('buy_price')}}</span>
+                        @endif
+                      </div>
+                    </div>
 
                     <div class='form-group{{$errors->has('description') ? ' has-error' : ''}}'>
                       {!!Form::label('description','Deskripsi',['class' => 'col-sm-2 control-label'])!!}

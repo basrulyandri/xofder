@@ -1,27 +1,7 @@
-Stock barang yang masuk secara otomatis masuk ke Toko Redfox Blok F
-
-Kasir belum bisa input stock barang
-
-Transaksi antar toko harusnya di validasi kedua toko. Pengirim dan penerima
+Tanggal 13 Mei 2019
+-- Tambah field buy_price di table products
+-- Tambah field buy_price di table items
 
 
-fungsi edit penjualan ke customer masih belum sempurna. Harusnya ketika di edit dan klik tombol "selesai" aplikasi menanyakan pembayaran
 
-* Pembayaran sering dikasih diskon. Biasanya karena sesuaikan kembalian receh atau kasih THR ke pelanggan
-
-* adakan search product di halaman penjualan. Soalnya productnya banyak.
-
-* Penjualan semua ada filter untuk menampilkan penjualan tanggal tertentu dengan rincian sama seperti penjualan hari ini.
-
-
-Petunjuk Debug
--- error di tooltips highchart, tambahkan ->plotOptions([
-                    'enabled' =>  true,
-                    'borderRadius'=> 2,
-                    'y'=> -10,
-                    'shape' => 'callout'])
-
--- update 1.1.0
-	--> tambah field available_stocks di table products
-
-
+-- Sementara untuk admin di halaman product index, available stocks di ubah langsung ambil ke field available_stocks. Sebelumnya ambil dari $product->storeAvailableStocks() dan ini berat banget querynya

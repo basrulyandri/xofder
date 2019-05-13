@@ -48,9 +48,16 @@
                 </li> 
                 @endif           
                 
-                <li>
-                    <a href="{{route('report.index')}}"><i class="fa fa-pie-chart"></i> <span class="nav-label">Laporan</span></a>
-                </li>  
+                
+
+                <li class="">
+                    <a href="#"><i class="fa fa-pie-chart"></i> <span class="nav-label">Laporan</span> <span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse" aria-expanded="false" style="height: 0px;">                       
+                       <li><a href="{{route('report.index')}}">Ringkasan</a></li>
+                       <li><a href="{{route('report.daterange')}}">Rentang waktu</a></li>
+                                           
+                    </ul>
+                </li>
                 <li style="background-color: red;">
                     @if(getSetting('kasir_is_blocked') == '1')
                         <a href="{{route('toggle.block.app','open')}}"><i class="fa fa-exclamation"></i> <span class="nav-label">Buka Aplikasi</span></a>

@@ -37,7 +37,8 @@
                                 <th>KODE</th>
                                 <th>NAMA</th> 
                                 <th>STOCK TERSEDIA</th>                                                              
-                                <th>HARGA JUAL</th> 
+                                <th>HARGA JUAL</th>
+                                <th>HARGA MODAL</th> 
                                 <th>DESKRIPSI</th>                                
                                 <th>ACTION</th>
                             </tr>
@@ -47,8 +48,9 @@
                             <tr>
                                 <td>{{$product->code}}</td>                                                           
                                 <td><a href="{{route('product.view',$product->id)}}">{{$product->name}}</a></td>
-                                <td>{{$product->StoreAvailableStocks()}}</td>
+                                <td>{{$product->available_stocks}}</td>
                                 <td>{{toRp($product->sell_price)}}</td>
+                                <td>{{toRp($product->buy_price)}}</td>
                                 <td>{{substr($product->description,0,50)}}</td>                                
                                 <td class="text-navy">
                                     <a href="{{route('product.view',$product->id)}}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> Lihat</a>

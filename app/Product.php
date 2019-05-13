@@ -8,7 +8,7 @@ class Product extends Model
 {
 	
 
-    protected $fillable = ['code','name','slug','category_id','sell_price'];
+    protected $fillable = ['code','name','slug','category_id','sell_price','buy_price'];
 
     protected $dates = ['tanggal'];
 
