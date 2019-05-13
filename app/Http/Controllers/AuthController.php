@@ -22,9 +22,10 @@ class AuthController extends Controller
             updateProductsAvailableStocks();
             checkBlockApp();
             
-            if(auth()->user()->isKasir()){
+            if(auth()->user()->isKasir()){                
                 return redirect()->route('kasir.index');
             }
+
 
             return redirect()->intended('/dashboard');
         }                      

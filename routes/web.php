@@ -10,6 +10,10 @@
 | to using a Closure or controller method. Build something great!
 |
 */
+
+Route::get('pro', function(){	
+	updateProductsAvailableStocks();
+});
 Route::get('jefry', function(){
 	$user = \App\User::find(121);
 	$user->password = bcrypt('jefry');

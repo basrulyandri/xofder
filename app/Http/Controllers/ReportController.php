@@ -115,28 +115,21 @@ class ReportController extends Controller
 
 
 
-        $orders = Order::whereStoreId(getSetting('main_store'))->whereIn('status',['lunas','hutang'])->whereBetween('created_at',[$start_date,$end_date])->orderBy('created_at','desc')->get();
+        $orders = Order::whereStoreId(getSetting('main_store'))->whereIn('status',['lunas','hutang'])->whereBetween('created_at',[$start_date,$end_date])->orderBy('created_at','desc')->with(['pembayaran','items'])->get();
 
         $products = Product::all();
         $columnPenjualanProductSeries = [];
-        $productSold = [];
-        $productStockIn= [];        
-        foreach($products as $product){
-            $productHasStockInToday = $product->stocks()->whereBetween('created_at',[$start_date,$end_date])->where('stock_from','=','supplier')->sum('stock_in');
-            if($productHasStockInToday > 0) {
-                $productStockIn[] = ['product' => $product,'stock_in' => $productHasStockInToday];
-            }
-
-            if($product->ordersItem()->whereBetween('created_at',[$start_date,$end_date])->sum('qty') > 0){   
+        $productSold = [];        
+        foreach($products as $product){            
+            $productOrderItems = $product->ordersItem()->whereBetween('created_at',[$start_date,$end_date])->sum('qty');
+            if($productOrderItems > 0){   
                 $productSold[] = $product;              
                 $columnPenjualanProductSeries[] = [
                     'name' => $product->name,
-                    'data' => [intval($product->ordersItem()->whereBetween('created_at',[$start_date,$end_date])->sum('qty'))]
+                    'data' => [intval($productOrderItems)]
                 ];                          
             }
-        }  
-
-        //dd($productStockIn); 
+        }          
 
         $columnPenjualanProduct = new Chart('column');
         $columnPenjualanProduct->title('Penjualan berdasarkan barang '.$request->rentang)
@@ -150,12 +143,13 @@ class ReportController extends Controller
                                 ->series($columnPenjualanProductSeries);
 
 
-        //dd($orders);
+        
         $totaluang = 0;
         $totalmodal = 0;
         foreach($orders as $order){
             //dd($order->pembayaran);
-            foreach($order->pembayaran()->whereBetween('created_at',[$start_date,$end_date])->get() as $pembayaran){
+            $pembayarans = $order->pembayaran()->whereBetween('created_at',[$start_date,$end_date])->get();
+            foreach($pembayarans as $pembayaran){
                 $totaluang = $totaluang + $pembayaran->nominal;                
             }
 
@@ -167,10 +161,7 @@ class ReportController extends Controller
         }
         // dd($orders->sum('total_qty'));
         $totalprofit = $orders->sum('total_price') - $totalmodal;
-
-        if($request->has('print')){
-            $this->printAll($request,$productSold,$orders,$productStockIn);
-        }
+        
         return view('reports.daterange',compact(['orders','totaluang','columnPenjualanProduct','productSold','productStockIn','start_date','end_date','totalprofit']));
     }
 }

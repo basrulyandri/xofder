@@ -52,7 +52,7 @@ function amountOfSuccessOrders(){
 function amountOfTotalStocks(){
 	$total = 0;
 	foreach(\App\Product::all() as $product){
-		$total += $product->availableStocks();
+		$total += $product->available_stocks;
 	}
 
 	return $total;

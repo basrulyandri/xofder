@@ -48,19 +48,18 @@ class Product extends Model
 
     public function storeAvailableStocks()
     {
-        if(auth()->user()->isKasir()){
-            $userStore = auth()->user()->store;
-        } else{
-            $userStore = Store::find(getSetting('main_store'));
-        }
-        
         $user = auth()->user();
-
+        if($user->isKasir()){
+            $userStore = $user->store;
+        } else{
+            $userStore = Store::find(config('app.main_store'));
+        }        
+        
         $stock_in = $this->stocks()->whereStoreId($userStore->id)->where('stock_in','!=','0')->sum('stock_in');
 
         // MEngambil jumlah jumlah penjualan dari sebuah barang berdasarkan toko user yang yang sedang login
         $jumlahPenjualanToko = 0;
-        foreach($this->ordersItem as $item){
+        foreach($this->ordersItem()->with('order')->get() as $item){
             if($item->order->store_id == $userStore->id){
                 $jumlahPenjualanToko += $item->qty;
             }

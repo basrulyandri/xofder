@@ -22,6 +22,7 @@
     </div> 
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
+    @if(\Request::has('rentang')) 
     <div class="row">
                     <div class="col-lg-3">
                         <div class="ibox float-e-margins">
@@ -76,7 +77,7 @@
             </div>
         </div>
 	<div class="row">
-        @if(\Request::has('rentang'))        
+               
 		<div class="col-lg-9">               
 
                 <div class="ibox-content">
@@ -98,15 +99,7 @@
                         <h5>Barang Masuk</h5>                               
                     </div>                
                     <div class="ibox-content no-padding">
-                        <ul class="list-group">
-                            @foreach($productStockIn as $psi)
-                            <li class="list-group-item">
-                                <span class="badge badge-primary">{{$psi['stock_in']}}</span>
-                                {{$psi['product']->name}}
-                            </li>
-                            @endforeach
-                            
-                        </ul>
+                        
                     </div>
                 </div>
 
