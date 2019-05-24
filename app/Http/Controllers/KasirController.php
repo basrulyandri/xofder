@@ -61,11 +61,13 @@ class KasirController extends Controller
     		$order->save();
 
     		foreach(session('cart')->items as $key => $item){
+                $itemBuyPrice = Product::find($key)->buy_price;
     			\App\Item::create([
     					'order_id' => $order->id,
     					'product_id' => $key,
     					'qty' => $item['qty'],
-    					'price' => $item['price']
+    					'price' => $item['price'],
+                        'buy_price' => $itemBuyPrice
     				]);
     		}
 
@@ -104,11 +106,13 @@ class KasirController extends Controller
                 $order->save();
 
                 foreach(session('cart')->items as $key => $item){
+                $itemBuyPrice = Product::find($key)->buy_price;
                 \App\Item::create([
                         'order_id' => $order->id,
                         'product_id' => $key,
                         'qty' => $item['qty'],
-                        'price' => $item['price']
+                        'price' => $item['price'],
+                        'buy_price' => $itemBuyPrice
                     ]);
                 }
                 
@@ -127,11 +131,13 @@ class KasirController extends Controller
 
             $order->items()->delete();
             foreach(session('cart')->items as $key => $item){
+                $itemBuyPrice = Product::find($key)->buy_price;
                 \App\Item::create([
                         'order_id' => $order->id,
                         'product_id' => $key,
                         'qty' => $item['qty'],
-                        'price' => $item['price']
+                        'price' => $item['price'],
+                        'buy_price' => $itemBuyPrice
                     ]);
                 }
         }
@@ -178,11 +184,13 @@ class KasirController extends Controller
                 $order->save();
 
                 foreach(session('cart')->items as $key => $item){
+                $itemBuyPrice = Product::find($key)->buy_price;
                 \App\Item::create([
                         'order_id' => $order->id,
                         'product_id' => $key,
                         'qty' => $item['qty'],
-                        'price' => $item['price']
+                        'price' => $item['price'],
+                        'buy_price' => $itemBuyPrice
                     ]);
                 }
                 
@@ -198,11 +206,13 @@ class KasirController extends Controller
 
             $order->items()->delete();
             foreach(session('cart')->items as $key => $item){
+                $itemBuyPrice = Product::find($key)->buy_price;
                 \App\Item::create([
                         'order_id' => $order->id,
                         'product_id' => $key,
                         'qty' => $item['qty'],
-                        'price' => $item['price']
+                        'price' => $item['price'],
+                        'buy_price' => $itemBuyPrice
                     ]);
                 }
         }
@@ -277,11 +287,13 @@ class KasirController extends Controller
             $order_baru->save();
 
             foreach(session('cart')->items as $key => $item){
+                $itemBuyPrice = Product::find($key)->buy_price;
                 \App\Item::create([
                         'order_id' => $order_baru->id,
                         'product_id' => $key,
                         'qty' => $item['qty'],
-                        'price' => $item['price']
+                        'price' => $item['price'],
+                        'buy_price' => $itemBuyPrice
                     ]);
             }
 
@@ -301,11 +313,13 @@ class KasirController extends Controller
 
             $order->items()->delete();
             foreach(session('cart')->items as $key => $item){
+                $itemBuyPrice = Product::find($key)->buy_price;
                 \App\Item::create([
                         'order_id' => $order->id,
                         'product_id' => $key,
                         'qty' => $item['qty'],
-                        'price' => $item['price']
+                        'price' => $item['price'],
+                        'buy_price' => $itemBuyPrice
                     ]);
             }      
 
@@ -520,11 +534,13 @@ class KasirController extends Controller
         $order->save();
         $order->items()->delete();
         foreach(session('cart')->items as $key => $item){
+            $itemBuyPrice = Product::find($key)->buy_price;
             \App\Item::create([
                     'order_id' => $order->id,
                     'product_id' => $key,
                     'qty' => $item['qty'],
-                    'price' => $item['price']
+                    'price' => $item['price'],
+                    'buy_price' => $itemBuyPrice
                 ]);
         }
 
